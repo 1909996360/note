@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>this指向问题</title>
+</head>
+<body>
+    <script>
+        /*
+            this的指向
+                在es5中，其实this的指向。始终坚持一个原理： this永远指向最后调用它的那个对象
+
+            举一个最简单的例子
+
+            例1： 
+                    var name = 'windowsName'
+                    function a(){
+                        var name = 'Cherry'
+                        console.log(this.name) // windowsName
+                        console.log('inner:' + this) // Window
+                    }
+                    a()
+                    console.log('outer:' + this) // Window
+
+            因为this永远指向最后调用它的那个对象，最后调用a的地方a(),前面没有调用的对象那么就是全局对象window，这就相当于是window.a();注意，这里我们没有使用严格模式，如果使用严格模式的话，全局对象就是undefined，那么就会报错 Uncaught TypeError: Cannot read property 'name' of undefined
+        */ 
+            // "use strict"
+            // var name = 'windowsName'
+            // function a(){
+            //     var name = 'Cherry'
+            //     console.log(this.name) 
+            //     console.log('inner:' + this)
+            // }
+            // window.a()
+            // console.log('outer:' + this)
+
+
+
+
+            /*
+                    例2：
+                        var name = 'windowsName'
+                        var a = {
+                            name:'Cherry',
+                            fn : function (){
+                                console.log(this.name) //Cherry
+                            }
+                        }
+
+                        a.fn()
+
+                    在这个例子中，函数fn是对象a调用的，所以打印的值就是a中的name的值
+            */ 
+                        
+            // var name = 'windowsName'
+            //  var a = {
+            //      name:'Cherry',
+            //      fn : function (){
+            //          console.log(this.name) // 
+            //      }
+            // }
+            //  a.fn()
+
+
+            /*
+                    例3：
+                        var name = 'windowsName'
+                        var a = {
+                            name:'Cherry',
+                            fn:function(){
+                                console.log(this.name) //Cherry
+                            }
+                        }
+                        window.a.fn()
+                    
+                    这里打印Cherry的原因也是因为刚刚那句话this永远指向最后调用它的那个对象，最后调用它的对象仍然是对象a
+                        
+            */ 
+
+            // var name = 'windowsName'
+            // var a = {
+            //     name:'Cherry',
+            //     fn:function(){
+            //         console.log(this.name) //Cherry
+            //     }
+            // }
+            // window.a.fn()
+
+
+            /*
+                     例4:
+                        var name = 'windowsName'
+                        var a = {
+                            fn:function(){
+                                console.log(this.name) // undefined
+                            }
+                        }
+                        window.a.fn()
+
+                    这里为什么会打印undefined呢？这是因为正如刚刚所描述的那样，调用fn的是a对象，也就是说fn的内部的this是对象a，而对象a并没有对name进行定义，所以log的this.name的值是undefined
+
+                    这个例子还是说明了：this永远指向最后调用它的那么对象，因为最后调用fn的对象是a，所以就算a中没有name这个属性，也不会继续向上一个对象寻找this.name,而是直接输出undefined
+
+                        
+            */ 
+
+            // var name = 'windowsName'
+            //  var a = {
+            //      fn:function(){
+            //          console.log(this.name) // undefined
+            //      }
+            //  }
+            //  window.a.fn()
+
+
+            /*
+                        例5：
+                            var name = 'windowsName'
+                            var a = {
+                                name : null,
+                                fn:function(){
+                                    console.log(this.name) // windowsName
+                                }
+                            }
+                            var f = a.fm
+                            f()
+
+                            这里你可能会有疑问，为什么不是Cherry，这是因为虽然将a对象的fn方法赋值给变量f了，但是没有调用，由于刚刚的f并没有调用，所以fn()最后仍然是window调用的，所以this指向的也就是window
+
+                            由以上五个例子我们可以看出，this的指向并不是在创建的时候就可以确定的，在es5中，永远是 this永远指向最后调用它的那个对象
+            */ 
+
+            // var name = 'windowsName'
+            // var a = {
+            //     name : null,
+            //     fn:function(){
+            //         console.log(this.name) // windowsName
+            //     }
+            // }
+            // var f = a.fn
+            // f()
+
+            /*
+                        例6:
+                            var name = 'windowsName'
+                            function fn(){
+                                var name = 'Cherry'
+                                innerFunction()
+                                function innerFunction(){
+                                    console.log(this.name) // windowsName
+                                }
+                            }
+                        fn()
+            */ 
+
+            // var name = 'windowsName'
+            // function fn(){
+            //     var name = 'Cherry'
+            //     innerFunction()
+            //     function innerFunction(){
+            //         console.log(this.name) // windowsName
+            //     }
+            // }
+            // window.fn()
+
+            /怎么改变this的指向/
+            
+            /*
+                改变this的指向有以下几种方法：
+                    ·使用es6的箭头函数
+                    ·在函数内部使用 _this = this
+                    ·使用apply、call、bind
+                    ·new实例化一个对象
+
+                            例7：
+                                var name = 'windowsName'
+                                var a = {
+                                    name : 'Cherry',
+
+                                    func1 : function(){
+                                        console.log(this.name)
+                                    },
+
+                                    func2 : function(){
+                                        setTimeout(function (){
+                                            this.func1()
+                                        },100)
+                                    }
+                                }
+                                a.func2() // this.func1 is not a function
+
+                            在不使用箭头函数的情况下，是会报错的，因为最后调用setTimeout的对象是window，但是在window中并没有func1函数
+                        
+            */ 
+
+
+            // var name = 'windowsName'
+            // var a = {
+            //     name : 'Cherry',
+
+            //     func1 : function(){
+            //         console.log(this.name)
+            //     },
+
+            //     func2 : function(){
+            //         // setTimeout没有使用箭头函数，指向的是window，全局没有func1函数，所以报错
+            //         setTimeout(function (){
+            //             this.func1()
+            //         },100)
+            //     }
+            // }
+            // a.func2() // this.func1 is not a function
+
+
+
+
+            /'箭头函数'
+                /*
+                    众所周知，ES6的箭头函数是可以避免ES5中使用this的坑，箭头函数的this始终指向函数定义时的this，而非执行时。箭头函数需要记者这句话：“箭头函数中没有this绑定，必须通过查找作用域来决定其值，如果箭头函数被非箭头函数包裹，则this绑定的最近一层非箭头函数的this，否则，this为undefined”
+
+                            例8：
+                                var name = 'windowsName'
+
+                                var a = {
+                                    name : 'Cherry',
+                                    func1: function(){
+                                        console.log(this.name)
+                                    },
+                                    func2: function(){
+                                        setTimeout(() =>{
+                                            this.func1()
+                                        },100)
+                                    }
+                                }
+
+                                a.func2() // Cherry
+                */ 
+
+            //     var name = 'windowsName'
+
+            //    var a = {
+            //        name : 'Cherry',
+            //        func1: function(){
+            //            console.log(this.name)
+            //        },
+            //        func2: function(){
+            //            setTimeout(() =>{
+            //                this.func1()
+            //            },100)
+            //        }
+            //    }
+
+            //    a.func2() // Cherry
+
+            /'在函数内部使用_this = this'
+
+            /*
+                如果不使用es6，那么这种方式应该是最简单的不会出错的方式了，我们是先将调用这个函数的对象保存在变量_this中，然后在函数中使用这个_this，这个_this就不会改变了
+
+                            例9：
+                                var name = 'windowsName'
+                                var a = {
+                                    name : 'Cherry',
+                                    func1 : function(){
+                                        console.log(this.name)
+                                    },
+                                    func2 : function(){
+                                        var _this = this
+                                        setTimeout(function(){
+                                            _this.func1()
+                                        },100)
+                                    }
+                                }
+                                a.func2() // Cherry
+
+                这个例子中，在func2中，首先设置var _this = this,这里的this是调用func2的对象a，为了防止在func2中的setTimeout被window调用而导致在setTimeout中的this为window，我们将this（指向变量a）赋值给一个变量_this，这样，在func2中我们使用_this就是指向对象a了
+
+            */ 
+
+            // var name = 'windowsName'
+            // var a = {
+            //     name : 'Cherry',
+            //     func1 : function(){
+            //         console.log(this.name)
+            //     },
+            //     func2 : function(){
+            //         var _this = this
+            //         setTimeout(function(){
+            //             _this.func1()
+            //         },100)
+            //     }
+            // }
+            // a.func2() // Cherry
+            
+            /'使用apply、call、bind'
+
+            /'使用apply'
+            /*
+                        例10：
+                            var a = {
+                                name : 'Cherry',
+
+                                func1 : function(){
+                                    console.log(this.name)
+                                },
+                                func2 : function(){
+                                    setTimeout(function(){
+                                        this.func1()
+                                    }.apply(a),100)
+                                }
+                            }
+                            a.func2() //Cherry
+            */ 
+
+            //  var a = {
+            //     name : 'Cherry',
+
+            //     func1 : function(){
+            //         console.log(this.name)
+            //     },
+            //     func2 : function(){
+            //         setTimeout(function(){
+            //             this.func1()
+            //         }.apply(a),100)
+            //         }
+            //     }
+            //     a.func2() //Cherry
+
+            
+            /'使用call'
+
+            /*
+                        例11：
+                            var a = {
+                                name : 'Cherry',
+                                func1 : function(){
+                                    console.log(this.name)
+                                },
+                                func2 : function(){
+                                    setTimeout(function(){
+                                        this.func1()
+                                    }.call(a),100)
+                                }
+                            }
+
+                            a.func2()  //Cherry
+            */ 
+            // var a = {
+            //    name : 'Cherry',
+            //    func1 : function(){
+            //        console.log(this.name)
+            //    },
+            //    func2 : function(){
+            //        setTimeout(function(){
+            //            this.func1()
+            //        }.call(a),100)
+            //    }
+            //  }
+
+            //     a.func2()  //Cherry
+
+
+            /'使用bind'
+            /*
+                        例12:
+                            var a = {
+                                name:'Cherry',
+                                func1 : function(){
+                                    console.log(this.name)
+                                },
+                                func2 : function(){
+                                    setTimeout(function(){
+                                        this.func1()
+                                    }.bind(a)(),100)
+                                }
+                            }
+
+                            a.func2() //Cherry
+            */ 
+
+            /'apply、call、bind区别'
+            /*
+                apply()方法调用一个函数，其具有一个指定的this值，以及作为一个数组提供的参数
+
+                语法：
+                    fun.apply(thisArg,[argsArray])
+
+                    ·thisArg:在fun函数运行时指定的this值。需要注意的是，指定的this值并不一定是该函数执行时真正的this值，如果这个函数处于非严格模式下，则指定为null或undefined时会自动指向全局对象（浏览器中就是window对象），同时值为原始值（数字，字符串，布尔值）的this会指向该原始值的自动包装对象
+
+                    ·argsArray:一个数组或者类数组对象，其中的数组元素将作为单独的参数传给fun函数，如果该参数的值为null或undefined，则表示不需要传入任何参数
+            */ 
+
+            /'apply和call的区别'
+            /*
+                其实apply和call基本类似，他们的区别只是传入的参数不同
+                
+                call的语法为：
+                    fun.call(thisArg[,arg1[,arg2[,...]]])
+
+                所以apply和call的区别是call方法接受的是若干个参数列表，而apply接收的是一个包含多个参数的数组
+
+                            例13：
+                                var a  = {
+                                    name : 'Cherry',
+                                    fn: function(a,b){
+                                        console.log(a+b)
+                                    }
+                                }
+                                var b = a.fn
+                                b.apply(a,[1,2]) // 3
+
+                            例14：
+                                var a = {
+                                    name : 'Cherry',
+                                    fn : function(a,b){
+                                        console.log(a + b)
+                                    }
+                                }
+                                var b = a.fn
+                                b.call(a,1,2) // 3
+            */ 
+
+            /'bind和apply、call区别'
+            /*
+                我们先来将刚刚的例子使用bind试一下
+                    var a = {
+                        name:'Cherry',
+                        fn:function(a,b){
+                            console.log(a+b)
+                        }
+                    }
+                    var b = a.fn
+                    b.bind(a,1,2)
+
+                    我们会发现并没有输出：
+
+                    bind()方法创建一个新的函数，当被调用时，将其this关键字设置为提供的值，在调用新函数时，在任何提供之前提供一个给定得参数序列
+
+                    所以我们可以看出，bind是创建一个新的函数，我们必须要手动去调用
+                    var a = {
+                        name:'Cherry',
+                        fn:function(a,b){
+                            console.log(a + b)
+                        }
+                    }
+                    var b = a.fn
+                    b.bind(a,1,2)() // 3
+            */ 
+        
+    </script>
+</body>
+</html>

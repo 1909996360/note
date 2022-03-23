@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>变量提升、函数提升</title>
+</head>
+<body>
+    <script>
+        /*
+            变量提升
+                console.log(name) // undefined
+                var name = 'zhw'
+                if(false){
+                    var age = 23
+                }
+                console.log(age) //undefined 不会报错
+
+            函数提升
+                console.log(fun) // function fun(){}
+                function fun(){}
+                if(false){
+                    function fun2()
+                }
+                console.log(fun2) // undefined 不会报错
+
+            函数提升优先级 > 变量提升优先级
+                console.log(fun) //function fun(){}
+                var fun = 'zhw'
+                function fun(){}
+                console.log(fun) //'zhw'
+        */ 
+    </script>
+</body>
+</html>

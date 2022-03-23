@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>介绍节流防抖原理、区别以及应用
+    </title>
+</head>
+<body>
+    <script>
+        /*
+            节流：
+                事件触发后，规定时间内，事件处理函数不能再次被调用，也就是说在规定的时间内，函数只能被调用一次，切实最先被触发调用的那次
+
+            防抖：
+                多次触发事件，事件处理函数只能执行一次，并且是在触发操作结束时执行。也就是说，当一个事件被触发准备执行事件函数前，会等待一定的时间，如果没有再次被触发，那么就执行，如果被触发了，那就本次作废，重新从新出发的时间开始计算，并再次等待，知道能最终执行
+
+            使用场景：
+                节流：滚动加载更多、搜索框搜的联想功能、高频点击、表单重复提交
+                防抖：搜索框搜索输入，并在输入完以后自动搜索，手机号，邮箱验证输入检测、串钩大小resize变化后，再重新渲染
+
+
+            节流函数：一个函数执行一次后，只有大于设定的执行周期才会执行第二次。有个需要频繁触发的函数，出于优化性能的角度，在规定时间内，只让函数触发的第一次生效，后面的不生效。
+
+
+            function throttle(fn,delay){
+                // 记录上一次函数触发的时间
+                var lastTime = 0
+                return function(){
+                    // 记录当前函数触发的时间
+                    var nowTime = Date.now()
+                    if(nowTime - lastTime > delay){
+                        // 修正this指向问题
+                        fn.call(this)
+                        // 同步执行结束时间
+                        lastTime = nowTime
+                    }
+                }
+            }
+
+            document.onscroll = throttle(function (){
+                console.log('触发了')
+            },200)
+
+            防抖函数：一个需要频繁触发的函数，在规定时间内，只让最后一次生效，前面的不生效
+
+            function debounce(fn,delay){
+                // 记录上一次的延时器
+                var timer = null
+                return function(){
+                    // 清除上一次的延时器
+                    clearTimeout(timer)
+                    timer = setTimerout(function(){
+                        // 修正this指向问题
+                        fn.apply(this)
+                    },delay)
+                }
+            }
+            document.getElementById('btn').onclick = debounce(function(){
+                console.log('按钮点击了')
+            },1000)
+        */ 
+    </script>
+</body>
+</html>

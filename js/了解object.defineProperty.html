@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>了解object.defindProperty()</title>
+</head>
+<body>
+    <script>
+        /对象的定义与赋值/ 
+        /*
+            经常使用的定义与赋值方法 obj.prop = value 或者 obj['prop'] = value
+        */ 
+       let Person = {}
+       Person.name = 'Jack'
+       Person['gender'] = 'female'
+       console.log(Person.name) // Jack
+       console.log(Person.gender) // female
+
+       /1/ /语法说明/
+      /*
+            Object.defineProperty()的作用就是直接在一个对象上定义一个新属性，或者修改一个已经存在的属性
+            Object.definedProperty(obj,prop,desc)
+                1、obj需要定义属性的当前对象
+                2、prop当前需要定义的属性名
+                3、desc属性描述符
+            一般通过为对象的属性赋值的情况下，对象的属性可以修改也可以删除，但是通过Object.defineProperty()定义属性，通过描述符的设置可以进行更精准的控制对象属性
+      */ 
+
+      /2/ /属性的特性以及内部属性/
+      /*
+            js有三种类型的属性
+
+            1、命名数据属性：拥有一个确定的值的属性，这也是最常见的属性
+            2、命名访问器属性：通过getter和setter进行读取和赋值的属性
+            3、内部属性：由js引擎内部使用的属性，不能通过js代码直接访问到，不过可以通过一些方法间接的读取和设置。比如，每个对象都有一个内部属性[[Prototype]]，你不能直接访问这个属性，但可以通过Object.getPrototypeOf()方法简介的读取到他的值，虽然内部属性通常用一个双括号包围的名称来表示，但实际上这并不上他们的名字，他们是一种抽象操作，是不可见的，根本没有上面两种属性有的那种字符串类型的属性
+      */  
+
+      /3/ /属性描述符/
+      /*
+            通过Object.defineProperty()为对象定义属性，有两种形式，且不能混合使用，分别为数据描述符，存取描述符，下面分别描述下两者的区别
+      */    
+
+      /4/ /数据描述符，特有的两个属性(value,writable)/
+        let Person = {}
+        Object.defineProperty(Person,'name',{
+            value:'jack',
+            writable:true // 是否可以改变
+        })   
+
+        /*
+            let Person = {}
+            Object.defineProperty(Person,'name',{
+                name:'Jack'
+            })   
+            Person.name = 'rose'
+            console.log(Person.name) // undefined
+        */ 
+
+        /*
+            let Person = {}
+            Object.defineProperty(Person,'name',{
+                name:'Jack',
+                writable:true
+            })
+            Person.name = 'rose'
+            console.log(Person.name) // rose
+        */ 
+
+        /*
+            注意，如果描述符中的某些属性被忽略，会使用一下默认规则
+            value:undefined
+            get:undefined
+            set:undefined
+            writable:false
+            enumerable:false
+            configurable:false
+        */
+
+        /5/ /存取描述符 -- 是由一对getter、setter函数功能来描述的函数/
+        /*
+            get:一个给属性提供getter的方法，如果没有getter则为undefined，该方法返回值被作用属性值，默认为undefined
+            set:一个给属性提供setter的方法，如果没有setter则为undefined，该方法接受唯一参数，并将该参数的新值分配给该属性，默认值为undefined
+        */  
+        let Person = {}
+        let temp = null
+        Object.defineProperty(Person,'name',{
+            get:function(){
+                return temp
+            },
+            set:function(val){
+                temp = val
+            }
+        })
+        
+        /*
+            let Person = {}
+            let temp = null
+            Object.defineProperty(Person,'name',{
+                get:function(){
+                    return temp
+                },
+                set:function(val){
+                    temp = val
+                }
+            })
+            Person.name = 'jack'
+            console.log(Person.name) // jack
+        */ 
+
+        /6/ /存取器描述/
+        /*
+            当使用存取器描述属性的特征的时候，允许设置以下特性属性
+            var obj = {}
+            Object.defineProperty(obj,'newKey',{
+                get:function(){} | undefined,
+                set:function(value){} | undefined,
+                configurable : true | false,
+                enumerable:true | false
+            })
+
+            注意：当使用了getter或setter方法，不允许使用writable和value这两个属性
+        */   
+
+        /7/ /getter,setter/
+        /*
+            当设置或获取对象的某个属性的值的时候，可以提供getter、setter方法
+            · getter是一种获得属性值的方法
+            · setter是一种设置属性值的方法
+
+            在特性中使用get、set属性来定义对应的方法
+            var obj = {}
+            var initValue = 'hello'
+            Object.defineProperty(obj,'newKey',{
+                get:function(){
+                    // 当获取值的时候触发的函数
+                    return initValue
+                },
+                set:function(value){
+                    // 当设置值的时候触发的函数，设置的新值通过参数value拿到
+                    initValue = value
+                }
+            })
+            // 获取值
+            console.log(obj.newKey) //hello
+            // 设置值
+            obj.newKey = 'change value'
+
+            console.log(obj.newKey) // change value
+
+            注意：get和set不是必须成对出现，任写其一就可以，如果不设置方法，则get和set的默认值为undefined
+        */  
+
+         /8/ /数据描述符和存取描述均具有以下描述符/
+        /*
+            1、configrable 描述属性是否配置，以及可否删除
+            2、enumerable 描述属性是否会出现在for in 或者 Object.keys()的遍历中
+        */   
+
+        /9/ /configrable代码片段分析/
+        /*
+            'use strict'
+            let Person = {}
+            Object.defineProperty(Person,'name',{
+                value:'jack',
+                configurable:false,
+                writable:true,
+                enumerable:true
+            })
+            delete Person.name  // Cannot delete property 'name' of #<Object>
+        */  
+
+        /*
+                configurable:false // 不能删除属性
+
+            let Person = {}
+            Object.defineProperty(Person,'name',{
+                value:'jack',
+                configurable:false
+            })
+            Object.defineProperty(Person,'name',{
+                value:'rose'
+                // Cannot redefine property:name
+            })
+        */ 
+
+        /*
+                configurable:false // 不能重新定义属性
+            
+            let Person = {}
+            Object.defineProperty(Person,'name',{
+                value:'jack',
+                configurable:true,
+                writable:false
+            })
+            Object.defineProperty(Person,'name',{
+                value:'rose'
+            })
+            // 通过属性定义的形式可以修改name的属性值
+            console.log(Person.name) // rose
+        */ 
+
+        /*
+            等价上一张图的代码
+            
+            let Person = {}
+            Object.defineProperty(Person,'name',{
+                value:'jack',
+                configurable:false,
+                writable:true
+            })
+            Object.defineProperty(Person,'name',{
+                value:'rose'
+            })
+            // 通过属性定义的形式可以修改name的属性值
+            console.log(Person.name) // rose
+        */ 
+
+        /*
+            与上一张图的代码进行对比
+            'use strict'
+            let Person = {}
+            Object.defineProperty(Person,'name',{
+                value:'jack',
+                configurable:true,
+                writable:true,
+                enumerable:true
+            })
+            delete Person.name
+            console.log(Person.name) // undefined
+
+
+            configurable:true 能删除属性
+        */ 
+
+        /*
+            
+            let Person = {}
+            Object.defineProperty(Person,'name',{
+                value:'jack',
+                configurable:true,
+                wirtable:false
+            })
+            Object.defineProperty(Person,'name',{
+                value:'rose'
+            })
+            // 通过属性定义的形式可以修改name的属性值
+            console.log(Person.name) // rose
+            // 通过赋值的形式，不可以修改，因为wirtable为false
+            Person.name = 'tom'
+            console.log(Person.name) rose
+
+             configurable:true 能够定义属性
+        */  
+
+        /*
+            let Person = {}
+            Object.defineProperty(Person,'name',{
+                value:'jack',
+                configurable:false,
+                writable:true
+            })
+            Object.defindProperty(Person,'name',{
+                value:'rose'
+            })
+            // 通过属性定义的形式可以修改name的属性值
+            console.log(Person.name) // rose
+            // 通过赋值的形式，可以修改，因为wirtable为true
+            Person.name = 'tom'
+            console.log(Person.name) // tom
+
+            configurable:false 与上图做对照
+        */ 
+
+        /*
+            从以上代码运行结果分析总结可知
+            1、configurable:false时，不能删除当前属性，且不能重新配置当前属性的描述符（有一个小小的意外，可以把wirtable的状态由true改为false，但是无法由false改为true），但是在wirtable:true的情况下，可以改变value的值
+            2、configurable:true时，可以删除当前属性，可以配置当前属性所有描述符
+        */ 
+
+        /10/ /enumberable代码片段分析/
+        /*
+            let Person = {}
+            Object.defineProperty(Person,'name',{
+                value:'Jack',
+                enumerable:false
+            })
+            Person.gender = 'male'
+            Object.defineProperty(Person,'age',{
+                value:'26',
+                enumerable:true
+            })
+            console.log(Object.key(Person))  ['gender','age']
+
+            for(let k in Person){console.log(k)}   gender,age
+
+            console.log(Person.propertyIsEnumerable('name'))  false
+            console.log(Person.propertyIsEnumerable('gender')) true
+            console.log(Person.propertyIsEnumerable('age')) true
+         */ 
+
+        /11/ /注意:以下两种区别/
+        /*
+            let Person = {}
+            Person.gender = 'male'
+            // 等价于
+            Object.defineProperty(Person,'gender',{
+                value:'male',
+                configurable:true,
+                writable:true,
+                enumerable:true
+            })
+
+            Object.defineProperty(Person,'age',{
+                value:'26'
+            })
+
+            // 等价于
+            Object.defineProperty(Person,'age',{
+                value:'26',
+                configurable:false,
+                wirtable:false,
+                enumerable:false
+            })
+        */  
+       
+        /12/ /不变性/
+        /*
+            1、对象常量
+                结合writable:false 和 configurable:false 就可以创建一个真正的常量属性（不可修改，不可重新定义或者删除）
+            
+            let Person = {}
+            Object.defineProperty(Person,'name',{
+                value:'Jack',
+                writable:false,
+                configurable:false
+            })
+            delete Person.name // 不可删除
+            Person.name = 'rose'
+        */   
+    </script>
+</body>
+</html>

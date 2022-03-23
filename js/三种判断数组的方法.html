@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三种判断数组得方式，分别介绍他们之间得区别和优劣</title>
+</head>
+<body>
+    <script>
+        /*
+            1、Object.prototype.toString.call()
+            2、instanceof
+            3、Array.isArray()
+
+
+            1、Object.prototype.toString.call()
+                每一个继承Object得对象都有toString方法，如果toString方法没有重写得话，会返回[Object type],其中type为对象得类型。但当除了Object类型得对象外，其他类型直接使用toString方法时，会直接返回都是内容得字符串，所以我们需要使用call或者apply方法来改变toString方法得执行上下文
+
+                const an = ['Hello','An'] ; 
+                an.toString()
+                // "Hello,An"
+                Object.prototype.toString.call(an)
+                // [object Array]
+
+                
+                这种方法对于所有基本的数据类型都能进行判断，即使是null和undefined
+                Object.prototype.toString.call('An')
+                // [object String]
+                Object.prototype.toString.call(1)
+                // [object Number]
+                Object.prototype.toString.call(Symbol(1))
+                // [object Symbol]
+                Object.prototype.toString.call(null)
+                // [object Null]
+                Object.prototype.toString.call(undefined)
+                // [object Undefined]
+                Object.prototype.toString.call(function(){})
+                // [object Function]
+                Object.prototype.toString.call({name:'An'})
+                // [object Object]
+
+                Object.prototype.toString.call() 常用于判断浏览器内置对象时
+
+            2、instanceof
+                instanceof的内部机制是通过判断对象的原型链中是不是能找到类型的prototype
+                使用instanceof判断一个对象是否为数组，instanceof会判断这个对象的原型链上是否会找到对应的Array的原型，找到返回true，否则返回false
+                [] instanceof Array;//true
+                但instanceof只能用来判断对象类型，原始类型不可以。并且所有对象类型instanceof Object都是true
+                [] instanceof Object // true
+
+            3、Array.isArray()
+                功能：用来判断对象是否为数组
+                instanceof与isArray
+                当检测Array实例时，Array.isArray优于instanceof，因为Array.isArray可以检测出iframes
+                var iframe = document.createdElement('iframe')
+                document.body.appendChild(iframe);
+                xArray = window.frames[window.farames.length - 1].Array
+                var arr = new xArray(1,2,3)
+
+                Array.isArray(arr)
+                // [1,2,3]
+                Object.prototype.toString.call(arr)
+                // true
+
+                Array.isArray() 与 Object.prototype.toString.call()
+                Array.isArray()是ES5新增的方法，当不存在Array.isArray(),可以用Object.prototype.toString.call()实现
+
+                if(!Array.isArray){
+                    Array.isArray = function(arg){
+                        return Object.prototype.toString.call(arg) == '[object Array]'
+                    }
+                }
+        */ 
+    </script>
+</body>
+</html>

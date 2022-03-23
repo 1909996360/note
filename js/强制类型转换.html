@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>强制类型转换</title>
+</head>
+<body>
+    <script>
+        // 1、Number()
+        // 参数为原始类型
+
+        // 数值：转换后还是原来的值
+        console.log(Number(123)); //123
+
+        // 字符串：如果可以被解析为数值，则转换为相应的数值
+        console.log(Number('123')); //123
+
+        // 字符串：如果不可以被解析为数值，返回NaN
+        console.log(Number('123abc')); //NaN
+
+        // 空字符串转为0
+        console.log(Number('')); // 0
+
+        // 布尔值：true转成1，false转成0
+        console.log(Number(true)); //1
+        console.log(Number(false)); //0
+
+        // undefined:转成NaN
+        console.log(Number(undefined)); //NaN
+
+        // null:转为0
+        console.log(Number(null)); // 0
+
+        // Number()将字符串转为数值，要比parseInt函数严格。基本上，只要有一个字符无法转成数值，整个字符串就会被转为NaN，但是，parseInt可以处理字符串截取和数字进制问题：
+        console.log(parseInt('32 abc'));  //32
+        console.log(parseInt('0x11 abc')); //17
+ 
+        console.log(Number('32 abc')); ///NaN
+        console.log(Number('0x11 abc')); //NaN
+
+        // 参数为对象
+        // 当Number()的参数为对象时，基本都转换为NaN，除了包含单个数值的数组
+        console.log(Number({a:1})); //NaN
+        console.log(Number([1,2,3])); //NaN
+        console.log(Number([5])); //5
+
+        // 为什么会这样？到底发生了什么
+        // 先来看这样一段代码
+        // const obj = {
+        //     toString:function(){
+        //         return 1
+        //     },
+        //     valueOf:function(){
+        //         return 2
+        //     }
+        // }
+        // console.log(Number(obj)); //2
+
+        // Number(obj)调用valueOf方法，输出的结果为2，将上面的代码做一些调整
+        // const obj = {
+        //     toString:function(){
+        //         return 1
+        //     },
+        //     valueOf:function(){
+        //         return {}
+        //     }
+        // }
+
+        // console.log(Number(obj)); //1
+        // 结果为1，Number(obj)调用toString方法，那么再看下面的代码
+        // const obj ={
+        //     toString:function(){
+        //         return {}
+        //     },
+        //     valueOf:function(){
+        //         return {}
+        //     }
+        // }
+        // console.log(Number(obj)); //报错
+        // 我们会发现，执行代码的时候报错，错误信息Uncaught TypeError: Cannot convert object to primitive value，如果删除toString方法呢？
+        // const obj = {
+        //     valueOf:function(){
+        //         return {}
+        //     }
+        // }
+        // console.log(Number(obj)); //NaN
+
+        // 在上面的代码中，Number({})的执行时调用了默认的toString方法，也就是Object.prototype上的toString方法。具体的过程如下面的代码所示
+        // 拆解Number({})
+        // console.log(Object.prototype.toString.call({}) ); //[object Object]
+        // console.log(Number("[object Object]")); //NaN
+
+        // 在上面的示例中，valueOf返回的是对象，接下来我们看一下他返回数组的情形
+        // const obj = {
+        //     valueOf: function(){
+        //         return [];
+        //     }
+        // };
+
+        // console.log(Number(obj)) // NaN
+
+        // 在上面的代码中 Number(obj)可等价于Number([]),这里调用的是Array的toString方法，而不是Object的toString。如下
+        // 拆解Number([])
+        console.log(Array.prototype.toString.call([])); //''
+        console.log(Number('')); // 0
+
+        // 那么再看一下 Object.prototype.toString
+        console.log(Object.prototype.toString.call([])); //[object Array]
+        console.log(Number('[object Array]')); //NaN
+
+        // Number()的参数为对象类型时，可以得出下面的几点结论
+        // 1、调用对象自身的valueOf方法，如果返回原始类型的值，则直接对该值使用Number函数，不在进行后续步骤
+        // 2、如果valueOf方法返回的还是对象，则改为调用对象自身的toString方法，如果toString方法返回原始类型的值，则对该值使用Number函数，不在进行后续步骤
+        // 3、如果toString方法返回的是对象吧，报错
+
+        // object.prototype.toString 返回值
+
+        // 原始类型
+        console.log(Object.prototype.toString.call('123')); // '[object String]'
+        console.log(Object.prototype.toString.call(123)); //'[object Number]'
+        console.log(Object.prototype.toString.call(NaN));//'[object Number]'
+        console.log(Object.prototype.toString.call(Infinity)); // '[object Number]'
+        console.log(Object.prototype.toString.call(null)); //'[object Null]'
+        console.log(Object.prototype.toString.call(undefined)); // '[object Undefined]'
+
+        // 引用类型
+        console.log(Object.prototype.toString.call(function(){})); // '[object Function]'
+        console.log(Object.prototype.toString.call([1,2,3])); // '[object Array]'
+        console.log(Object.prototype.toString.call([1])); // '[object Array]'
+        console.log(Object.prototype.toString.call({})); // '[object Object]'
+
+        console.log(Object.prototype.toString.call(new Error())); //'[object Error]'
+        console.log(Object.prototype.toString.call(/\d/)); // '[object RegExp]'
+        console.log(Object.prototype.toString.call(Date())); // '[object String]'
+        console.log(Object.prototype.toString.call(new Date()));// '[object Date]'
+        console.log(Object.prototype.toString.call(Symbol())); // '[object Symbol]'
+
+        // 浏览器提供
+        (function(){
+           console.log(Object.prototype.toString.call(arguments)); 
+        })(); //'[object Arguments]'
+        console.log(Object.prototype.toString.call(document)); // '[object HTMLDocument]'
+        console.log(Object.prototype.toString.call(window)); // '[object Window]'
+
+
+        // 2、String()
+        // 参数为原始类型
+        // 当String()的参数为原始数据类型时
+        // ·数值：转为相应的字符串
+        // ·字符串：转换后还是原来的值
+        // ·布尔值：ture转为字符串'true',false转为字符串'false'
+        // ·undefined：转为字符串'undefined'
+        // ·null：转为字符串'null'
+
+        // 代码示例如下：
+        console.log(String(123)); //123
+        console.log(String('abc')); //abc
+        console.log(String(true)); // true
+        console.log(String(undefined)); // undefined
+        console.log(String(null)); //null
+
+        // 参数为对象
+        // 当String()的参数为对象类型时
+        console.log(String({a:1})); //[object Object]
+        console.log(String([1,2,3])); // 1,2,3
+
+        const obj = {
+            toString:function(){
+                return 1
+            },
+            valueOf:function(){
+                return 2
+            }
+        }
+
+        console.log(String(obj)); //1
+
+        // String()的参数类型为对象的转换规则，与Number()基本相同，只是互换了valueOf方法和toString方法的执行顺序
+        // 1、先调用对象自身的toString方法。如果返回原始类型的值，则对该值使用String函数，不再进行一下步骤
+        // 2、如果toString方法返回的是对象，再调用源对象的valueOf方法，如果valueOf方法返回原始类型的值，则对该值使用String函数，不再进行一下步骤
+        // 3、如果valueOf方法返回的是对象，报错
+
+        // 不同类型的toString方法结果不同
+        
+        console.log([1,2].toString() === Array.prototype.toString.call([1,2])); // true
+        console.log(Array.prototype.toString.call([1,2]) == Object.prototype.toString.call([1,2])); //false
+
+
+        // 3、Boolean()
+        // falsey(虚值)
+        // 在Boolean类型转换时，虚值会转换为false，虚值主要有以下几种：
+        // undefined
+        // null
+        // 0 // +0 -0
+        // NaN
+        // false
+        // ..
+        // 其他状况
+        // 虚值之外的全部为true:
+        // Boolean([])//true
+        // Boolean({})//true
+        // Boolean(new Error())//true
+        // Boolean(Symbol())//true
+
+        // 隐式类型转换/自动转换
+        // 自动转换为布尔值
+        // 这些符号会自动转换为布尔值
+        // if()
+        // for while switch
+        // ! !!
+        // ===
+        // ? :
+        // && ||
+        // 隐式类型转换，除了虚值，其他都转换为true
+        
+        // 自动转换为字符串
+        // 字符串的自动转换，主要发生在字符串的加法运算时，当一个值为字符串时，另一个值为非字符串，则后者转为字符串
+
+        console.log('5'+1); //51
+        console.log('5'+true); //5true
+        console.log('5'+false); //5false
+        console.log('5'+{}); // 5[object Object]
+        console.log('5'+[]); // 5
+        console.log('5'+function(){}); //5function(){}
+        console.log('5'+undefined);//5undefined
+        console.log('5'+null);//5null
+        console.log(null + []);//null
+        console.log(null + {});//null[object Object]
+        console.log(null + function(){});//nullfunction(){}
+        console.log('');
+
+        // 自动转换为数值
+        // 除了加法运算符(+)有可能把操作数转为字符串，其他算数运算符都会把操作数自动转成数值
+        console.log('5'-2); // 3
+        console.log('5'*2); // 10
+        console.log(true-1); // 0
+        console.log(false-1); // -1
+        console.log('1'-1); // 0
+        console.log('5'*[]); // 0
+        console.log(false/5); // 0
+        console.log('abc'-1); //NaN
+        console.log(null + 1); //1
+        console.log(undefined - 1); //NaN
+        console.log('');
+        // 注意：null转为数值为0，而undefined转为数值时为NaN
+        // 正/负符号运算符中：
+        console.log(+'abc'); //NaN
+        console.log(-'abc'); //NaN
+        console.log(+true); // 1
+        console.log(-false); // -0
+        console.log('');
+        // 关系运算符，如 ==  !== ，也会转换为数值
+        console.log(1==true); // true
+        console.log('1' == true); // true
+        console.log('1' == 1); // true
+        console.log([1] == 1); //true
+        console.log([1] == true); // true
+        console.log([] == false); //true
+        console.log([] == null); //false
+        console.log([1,2] == NaN); //false
+        console.log('');
+
+        // 特殊值
+        // Infinity
+        console.log(Number(Infinity)); //Infinity
+        console.log(1/0 == Infinity); // true
+        console.log(1/Infinity == 0); // true
+        console.log(Infinity === Infinity); // true
+        console.log(Infinity === -Infinity); // false
+        console.log(0 === -0); // true
+        console.log(0/0); //NaN
+        console.log('');
+        // NaN
+        console.log(NaN == NaN); //false
+        console.log('');
+        // undefined 与 null
+        console.log(null === null); // true
+        console.log(undefined === undefined); // true
+        console.log(undefined == null); // true
+        console.log(undefined === null); // false
+
+
+        // 总结
+        // 现在我们解答一下开始提到的问题
+        // 首先是 [] == ![] 为true，如下所示
+        // 拆解 [] == ![]
+        // [].toString() // ''
+        // Number('') // 0
+        
+        // ![] //false
+        // Number(false) // 0
+        // 0 == 0 // [] == ![] 为true
+
+        // 而{} == !{} 为false，如下所示
+        // 拆解 {} == !{}
+        // ({}).toString() // '[object Object]'
+        // Number("[Object Object]") //NaN
+        // !{} //false
+        // Number(false) // 0
+        // NaN != 0 // {} == !{} 为false
+    </script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>map、forEach的区别</title>
+</head>
+<body>
+    <script>
+        /*
+            1、forEach和map能实现的功能相似
+            2、forEach、map、filter都能实现对原数组的修改
+            3、forEach没有返回值，map有返回值，filter有返回值
+
+
+        */
+
+        // 1、forEach：forEach方法对数组的每个元素执行一次提供的函数
+        // 语法：
+        // array.forEach(callback(currentVal,index,array){
+        //     // do something
+        // },thisArg)
+        /*
+            forEach使用说明：
+                1、forEach方法按升序为数组中含有效值的每一项执行一次callback函数，那些已删除（使用delete方法等情况）或者未初始化的项将被跳过（但不包括那些值为undefined的项），
+                2、如果给forEach传递了thisArg参数，当调用时，它将被传给callback函数，作为它的this值。否则，将会传入window作为它的this值。callback函数最终可观察到this值，这取决于函数观察到this的常用规则
+                3、forEach遍历的范围在第一次调用callback前就会确定，调用forEach后添加到数组中的项不会被callback访问到。如果已经存在的值被改变，则传递给callback的值是forEach遍历到他们那一刻的值，已删除的项不会被遍历到。如果已访问的元素在迭代时被删除了（例如使用shift（）），之后的元素将被跳过
+                4、forEach()为每个元素执行callback函数，不像map（）或者reduce（），它总是返回undefined值，并且不可链式调用。典型用例用在一个链的最后执行副作用
+
+            forEach要点：
+                1、没有返回值
+                var arr1 = [1,2,3,4,5]
+                var solt = arr1.forEach((v,i,t)=>{
+                    console.log(v)
+                })
+                console.log(slot)
+
+                2、不能中止或跳出forEach循环
+                var arr1 = [1,2,3,4,5]
+                // 使用break会报错
+                arr1.forEach((v,i,arr)=>{
+                    console.log(v)
+                    if(v === 3){
+                        break
+                    }
+                })
+
+                // return false 也无效
+                arr1.forEach((v,i,arr)=>{
+                    if(v===3){
+                        console.log('----')
+                        return false
+                    }
+                })
+                // 1 2 3 ---- 4 5
+
+                3、使用箭头函数,thisArg参数会被忽略
+                var arr1 = [1,2,3]
+                var arr2 = [7,8,9]
+
+                arr1.forEach((v,i,arr)=>{
+                    console.log(this)
+                })
+                // window
+                // window
+                // window
+
+                arr1.forEach((v,i,arr)=>{
+                    console.log(this)
+                },arr2)
+                // window
+                // window
+                // window
+
+                4、forEach()不会在迭代之前创建数组的副本，如果数组在迭代时被修改了，则其他元素会被跳过
+                var words = ['one','two','three','four']
+                words.forEach(function(word){
+                    console.log(word)
+                    if(word === 'two'){
+                        word.shift()
+                    }
+                })
+                // one
+                // two
+                // four
+                // 当到达包括值'two'的项时，整个数组的第一个项被移除了，这导致所有剩下的项上移一个位置，因为元素“four”现在在数组更前的位置，“three”会被跳过，forEach（）不会在迭代之前创建数组的副本
+
+                // 5、对原数组的修改
+                var arr1 = [1,2,3]
+                var arr2 = [7,8,9]
+                arr.forEach(function(v,i,arr)=>{
+                    console.log(this)
+                    arr[i]= v * 2
+                },arr2)
+                console.log(arr1)
+                // (3)[7,8,9]
+                // (3)[7,8,9]
+                // (3)[7,8,9]
+                // (3)[2,4,6]
+                // arr1从[1,2,3]变成了[2,4,6]函数内部this值时arr2
+        */ 
+
+
+        /*
+                2、map ： map()方法创建一个数组，其结果是该数组中的每个元素都调用一个提供的函数后返回的结果
+
+                语法： let new_array = arr.map(function(v,i.arr){
+                    // Return
+                }[,thisArg])
+                
+                返回值：
+                一个新数组，每个元素都是回调函数的结果
+
+
+                map使用说明：
+                1、map不修改调用它的原数组本身（当然可以在callback执行时改变原数组）
+                2、如果thisArg参数有值，则每次callback函数被调用的时候，this都会指向thisArg参数上的这个对象，如果省略了thisArg参数或者赋值为null或undefined，则this指向全局对象
+                3、map方法会给原数组中的每个元素都按顺序执行一次callback函数。callback每次执行后的返回值（包括undefined）组合起来形成一个新数组。callback函数只会在有值的索引上被调用，那些从来没被赋过值或者使用delete删除的索引不会被调用
+                4、使用map方法处理数组时，数组元素的范围是在callback方法第一次调用之前就已经确定了。在map方法执行的过程中：原数组中新增加的元素将不会被callback访问到；若已经存在的元素被改变或删除了，则他们的传递到callback的值是map方法遍历到他们的那一时刻的值；而被删除的元素将不会被访问到
+
+                map要点：
+                1、querySelectorAll应用
+                var elems = document.querySelectorAll('select option:checked')
+                var values = Array.prototype.map.call(elems,function(obj){
+                    return obj.value
+                })
+                上面代码展示了如何去遍历用querySelector得到的动态对象集合。在这里，我们获得了文档里所有选中的选项，并将其打印
+
+
+                map使用技巧案例：
+                通常使用parseInt时，只需要传递一个参数，但实际上，parseInt可以有两个参数，第二个参数是进制数，可以通过语句alert(parseInt,length) === 2 来验证，map方法在调用callback函数时，会给他传递三个参数：当前正在遍历的元素，元素索引，原数组本身，第三个参数parseInt会忽视，但第二个参数不会，也就是说：parseInt把传过来的索引值当成进制数来使用，从而返回了NaN
+                或者可以使用箭头函数
+                [1,2,3].map(str =>{
+                    parseInt(str)
+                })
+                
+                一个更简单的方式：
+                ['1','2','3'].map(Number) //[1,2,3]
+                
+                //与parseInt不同，下面的结果会返回浮点数或指数
+                ['1.1','2.2e2','3e300'].mqp(Number) // [1.1,220,3e+300] 
+
+        */ 
+
+
+        /*
+                3、filter：创建一个新数组，其包含通过所提供函数实现的测试的所有元素
+                语法：var new_array = arr.filter(callback[,thisArg])    
+
+                filter使用说明：
+                1、filter为数组中的每个元素调用一次callback函数，并利用所有使得callback返回true或者等价于true的值的元素创建一个新数组，callback只会在已经赋值的索引上被调用，对于那些已经被删除或者从未被赋值的索引不会被调用，那些没有通过callback测试的元素会被跳过，不会被包含在新数组中
+
+                2、filter不会改变原数组，他返回过滤后的新数组
+
+                3、filter遍历的元素范围在第一次调用callback之前就已经确定了。在调用filter之后被添加到数组中的元素不会被filter遍历到。如果已经存在的元素被改变了，则他们传入callback的值是filter遍历到他们那一刻的值。被删除或从来未被赋值的元素不会被遍历到
+
+                filter示例：
+                var filtered = [12,5,8,130,44].filter(function(v){
+                    return v >= 10
+                })
+                // [12,130,44]
+                
+        */
+      
+    </script>
+</body>
+</html>

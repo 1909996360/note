@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日常实现功能</title>
+</head>
+<body>
+    <script>
+        
+     
+
+        // Array
+        const players = [
+            { name: '科比', num: 24 },
+            { name: '詹姆斯', num: 23 },
+            { name: '保罗', num: 3 },
+            { name: '威少', num: 0 },
+            { name: '杜兰特', num: 35 }
+        ]
+        // 1、forEach
+        // 参数代表含义
+        // ·item:遍历项
+        // ·index:遍历项的索引
+        // ·arr:数组本身
+        Array.prototype.sx_froEach = function(callback){
+            for(let i = 0 ;i<this.length;i++){
+                callback(this[i],i,this)
+            }
+        }
+        players.sx_froEach((item,index,arr)=>{
+            console.log(item,index);
+        })
+
+        // { name: '科比', num: 24 } 0
+        // { name: '詹姆斯', num: 23 } 1
+        // { name: '保罗', num: 3 } 2
+        // { name: '威少', num: 0 } 3
+        // { name: '杜兰特', num: 35 } 4
+
+        // 2、map
+        // 参数代表含义
+        // ·item:遍历项
+        // ·index:遍历项的索引
+        // ·arr:数组本身
+        Array.prototype.sx_map = function(callback){
+            const res = []
+            for(let i = 0;i<this.length;i++){
+                res.push(callback(this[i],i,this))
+            }
+            return res
+        }
+
+        console.log(players.sx_map((item,index)=> `${item.name}--${item.num}--${index}`));
+
+        //  ["科比--24--0", "詹姆斯--23--1", "保罗--3--2", "威少--0--3", "杜兰特--35--4"]
+
+        // 3、filter
+        // 参数代表含义
+        // ·item:遍历项
+        // ·index:遍历项的索引
+        // ·arr:数组本身
+        Array.prototype.sx_filter = function(callback){
+            const res = []
+            for(let i = 0;i<this.length;i++){
+                callback(this[i],i,this) && res.push(this[i])
+            }
+            return res
+        }
+        console.log(players.sx_filter(item=>item.num >= 23));
+
+        // 0: {name: "科比", num: 24}
+        // 1: {name: "詹姆斯", num: 23}
+        // 2: {name: "杜兰特", num: 35}
+
+        // 4、every
+        // 参数代表含义
+        // ·item:遍历项
+        // ·index:遍历项的索引
+        // ·arr:数组本身
+        Array.prototype.sx_every = function(callback){
+            let flag = true
+            for(let i = 0 ; i<this.length;i++){
+                flag = callback(this[i], i , this)
+                if(!flag)break
+            }
+            return flag
+        }
+
+        console.log(players.sx_every(item => item.num >= 23)); //false
+        console.log(players.sx_every(item => item.num >= 0)); //true
+        
+
+        // 5、some
+        // 参数代表含义
+        // ·item:遍历项
+        // ·index:遍历项的索引
+        // ·arr:数组本身
+        Array.prototype.sx_some = function(callback){
+            let flag = false
+            for(let i = 0;i<this.length;i++){
+                flag = callback(this[i],i,this)
+                if(flag) break
+            }
+            return flag
+        }
+
+        console.log(players.sx_some(item => item.num >= 23)); // true
+        console.log(players.sx_some(item => item.num >= 50)); // false
+
+        // 6、reduce
+        // 参数代表含义
+        // ·pre:前一项
+        // ·next:下一项
+        // ·index:遍历项的索引
+        // ·arr:数组本身
+
+        Array.prototype.sx_reduce = function(callback,initValue){
+            let pre = initValue
+            for(let i = 0;i<this.length;i++){
+                pre = callback(pre,this[i],i,this)
+            }
+            return pre
+        }
+        // 计算所有num相加
+        const sum = players.sx_reduce((pre,next)=>{
+            return pre + next.num
+        },0)
+        console.log(sum); //85
+
+        // 7、findIndex
+        // 参数代表含义
+        // ·item:遍历项
+        // ·index:遍历项的索引
+        // ·arr:数组本身
+        Array.prototype.sx_findIndex = function(callback){
+            for(let i = 0 ; i<this.length;i++){
+                if(callback(this[i],i,this)){
+                    return i
+                }
+            }
+            return -1
+        }
+        console.log(players.sx_findIndex(item => item.name === '科比')); // 0
+        console.log(players.sx_findIndex(item => item.name === '安东尼')); // -1
+
+        // 8、find
+        // 参数代表含义
+        // ·item:遍历项
+        // ·index:遍历项的索引
+        // ·arr:数组本身
+        Array.prototype.sx_find = function(callback){
+            for(let i = 0;i<this.length;i++){
+                if(callback(this[i],i,this)){
+                    return this[i]
+                }
+                
+            }
+            return undefined
+        }
+        console.log(players.sx_find(item => item.name === '科比')); //{name: "科比", num: 24}
+        console.log(players.sx_find(item => item.name === '安东尼')); //undefined
+        
+        // 9、fill
+        // 参数代表含义
+        // ·initValue填充的值
+        // ·start开始填充索引，默认0
+        // ·end结束填充索引，默认length-1
+        Array.prototype.sx_fill = function(value,start = 0,end){
+            end = (end || this.length - 1) + 1
+            for(let i = start;i<end;i++){
+                this[i] = value
+            }
+            return this
+        }
+        console.log(players.sx_fill('林',1,3));
+        // 0: {name: "科比", num: 24}
+        // 1: "林"
+        // 2: "林"
+        // 3: "林"
+        // 4: {name: "杜兰特", num: 35}
+
+        // 10、includes
+        // 用处：查找元素，查到返回true，反之返回false，可找NaN
+        Array.prototype.sx_includes = function(value,start = 0){
+            if(start < 0) start = this.length + start
+            const isNaN = Number.isNaN(value)
+            for(let i = start ; i<this.length;i++){
+                if(this[i] === value || Number.isNaN(this[i]) === isNaN){
+                    return true
+                }
+            }
+            return false
+        }
+        console.log([1,2,3].sx_includes(2));
+        console.log([1,2,3,NaN].sx_includes(NaN));
+        console.log([1,2,3].sx_includes(1,1));
+
+        // 11、join
+        // 用处：将数组用分隔符拼成字符串，分隔符默认为，
+        Array.prototype.sx_join = function(s= ','){
+            let str = ''
+            for(let i = 0; i<this.length;i++){
+                str = i === 0? `${str}${this[i]}` : `${str}${s}${this[i]}`
+            }
+            return str
+        }
+        console.log([1,2,3].sx_join());//1,2,3
+        console.log([1,2,3].sx_join('*'));//1*2*3
+
+        // 12、flat
+        Array.prototype.sx_flat = function(){
+            let arr = this
+            while(arr.some(item=>Array.isArray(item))){
+                arr = [].concat(...arr)
+            }
+            return arr
+        }
+        const testArr = [1,[2,3,[4,5]],[8,9]]
+        console.log(testArr.sx_flat()); //[1, 2, 3, 4, 5, 8, 9]
+
+        // Object
+        const obj = {
+            name:'周厚武',
+            age:22,
+            gender:'男'
+        }
+        // 1、entries
+        // 用处：将对象转成键值对数组
+        Object.prototype.sx_entries = function(obj){
+            const res = []
+            for(let key in obj){
+                obj.hasOwnProperty(key) && res.push([key,obj[key]])
+            }
+            return res
+        }
+        console.log(Object.sx_entries(obj));
+        // 0: (2) ["name", "周厚武"]
+        // 1: (2) ["age", 22]
+        // 2: (2) ["gender", "男"]
+        
+        // 2、fromEntries
+        // 用处：跟entries相反，将键值对数组转成对象
+        Object.prototype.sx_fromEntries = function(arr){
+            const obj = {}
+            for(let i = 0;i<arr.length;i++){
+                const [key,value] = arr[i]
+                obj[key] = value
+            }
+            return obj
+        }
+        console.log(Object.sx_fromEntries([['name', '林三心'], ['age', 22], ['gender', '男']])); //{name: "林三心", age: 22, gender: "男"}
+
+        // 3、keys
+        // 用处：将对象的key转成一个数组合集
+        Object.prototype.sx_keys = function(obj){
+            const keys = []
+            for(let key in obj){
+                obj.hasOwnProperty(key) && res.push(key)
+            }
+            return keys
+        }
+        console.log(Object.keys(obj)); //["name", "age", "gender"]
+
+        // 4、instanceOf
+        // 用处：A instanceOf B ，判断A是否经过B的原型链
+        function instanceOf(father,child){
+            const fp = father.prototype
+            var cp = child.__proto__
+
+            while(cp){
+                if(cp === fp){
+                    return true
+                }
+                cp = cp.__proto__
+            }
+            return false
+        }
+        function Person(name){
+            this.name = name
+        }
+        const sx = new Person('周厚武')
+        console.log(instanceOf(Person,sx)); // true
+        // console.log(instanceOf(Person,sx2));
+
+        // 5、is
+        // 用处：Object.is(a,b),判断a是否等于b
+        Object.prototype.sx_is = function(x,y){
+            if(x === y){
+                // 防止 -0 和 +0
+                return x !== 0 || 1/x === 1/y
+            }
+            // 防止NaN
+            return x !== x && y !== y
+        }
+        const a = {name:'周厚武'}
+        const b = a
+        const c = {name:'周厚武'}
+
+        console.log(Object.sx_is(a,b)); // true
+        console.log(Object.sx_is(a,c)); // false
+
+        // Function
+        // 1、call
+        Function.prototype.sx_call = function(obj,...args){
+            obj = obj || window
+            // Symbol 是唯一的，防止重名key
+            const fn = Symbol()
+            obj[fn] = this
+            // 执行，返回执行值
+            return obj[fn](...args)
+        }
+
+        // const testobj = {
+        //     name:'周厚武',
+        //     testFn(age){
+        //         console.log(`${this.name}${age}岁了`);
+        //     }
+        // }
+        // const testobj2 = {
+        //     name:'sunshine_lin'
+        // }
+
+        // testobj.testFn.sx_call(testobj2,22) //sunshine_lin22岁了
+
+        // 2、apply
+        Function.prototype.sx_apply = function(obj,args){
+            obj = obj || window
+            // Symbol 是唯一的，防止重名key
+            const fn = Symbol()
+            obj[fn] = this
+            // 执行，返回执行值
+            return obj[fn](...args)
+        }
+
+        const testobj = {
+            name:'周厚武',
+            testFn(age){
+                console.log(`${this.name}${age}岁了`);
+            }
+        }
+
+        const testobj2 = {
+            name:'sunshine_lin'
+        }
+        testobj.testFn.sx_apply(testobj2,[22]) //sunshine_lin22岁了
+
+        // String
+        // 1、slice
+        // 参数代表含义
+        // ·start：开始截取的字符索引（包含此索引）
+        // ·end：结束截取的字符索引（不包含此字符）
+        // 注意点
+        // ·start > end :返回空字符串
+        // ·start < 0 : start = 数组长度+start
+        const str = 'zhouhouwu'
+
+        String.prototype.sx_slice = function(start = 0 ,end){
+            start = start < 0 ? this.length + start : start
+            end = !end && end !== 0 ? this.length : end
+            if(start >= end) return ''
+            let str = ''
+            for(let i = start;i<end;i++){
+                str += this[i]
+            }
+            return str
+        }
+
+        // console.log(str.sx_slice(2)) // nshine_lin
+        // console.log(str.sx_slice(-2)) // in
+        // console.log(str.sx_slice(-9, 10)) // shine_l
+        // console.log(str.sx_slice(5, 1)) // ''
+
+        // 2、substr
+        // 参数代表含义
+        // ·start:开始截取的字符索引（包含此字符）
+        // ·length:截取的长度
+        // 注意点：
+        // ·start < 0 ：start = 数组长度 + start
+        // ·length 超出所能截取范围，需要做处理
+        // ~length < 0 :返回空字符串
+
+        String.prototype.sx_substr = function(start = 0,length){
+            if(length < 0 ) return ''
+            start = start < 0 ? this.length + start :start
+            length = (!length && length !== 0) || length > this.length - start ? this.length : start + length
+            
+            let str = ''
+            for(let i = start; i < length ; i++){
+                str += this[i]
+            }
+            return str
+        }
+        
+        // console.log(str.sx_substr(3)); //uhouwu
+        // console.log(str.sx_substr(3,3));//uho
+        // console.log(str.sx_substr(5,300));//ouwu
+
+        // 3、substring
+        // 功能与slice大致相同
+        // 区别之处
+        // ·start > end:互换值
+        String.prototype.sx_sunstring = function(start = 0,end){
+            start = start < 0 ? this.length + start : start
+            end = !end && end !== 0 ? this.length : end
+            if(start >= end)[start,end] = [end,start]
+            let str = ''
+            for(let i = start ;i<end; i++){
+                str += this[i]
+            }
+            return str
+        }
+        console.log(str.sx_sunstring(2)); //ouhouwu
+        console.log(str.sx_sunstring(-2)); //wu
+        console.log(str.sx_sunstring(-9,10)); //zhouhouwuundefined
+        console.log(str.sx_sunstring(5,1)); // houh
+
+        // Promise篇
+        // 1、all
+        // ·接收一个Promise数组，数组中如有非Promise项，则此项当作成功
+        // ·如果所有Promise都成功，则返回成功结果数组
+        // ·如果有一个Promise失败，则返回这个失败结果
+
+        function all(promises){
+            const result = []
+            let count = 0
+            return new MyPromise((resolve,reject)=>{
+                const addData = (index,value) =>{
+                    result[index] = value
+                    count ++
+                    if(count === promises.length) resolve(result)
+                }
+                promises.forEach((promise,index)=>{
+                    if(promise instanceof MyPromise){
+                        promise.then(res=>{
+                            addData(index,res)
+                        },err => reject(err))
+                    }else{
+                        addData(index,promise)
+                    }
+                })
+            })
+        }
+
+
+        Array.prototype.zhw_suiyue = function(){
+            console.log(this);
+        }
+        
+        Object.prototype.zhw_suianju = function(){
+            console.log(this);
+        }
+
+        players.zhw_suiyue()
+        obj.zhw_suianju()
+
+        all(players)
+    </script>
+</body>
+</html>

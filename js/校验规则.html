@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校验规则</title>
+</head>
+<body>
+    <script>
+         function checkPhone(phone) {
+            let flag=true;
+            if (!(/^1[3456789]\d{9}$/.test(phone))) {
+                // return false;
+                flag=false;
+            }
+            return flag;
+        }
+
+
+        function validateMail(mail){//校验邮箱
+            if(mail!=""){
+                var strRegex = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
+                if(!strRegex.test(mail)){
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        function chkIt(frm){
+            if (/^[a-zA-Z]+$/.test(frm)){  
+                return true;
+            }
+            return false
+        }
+        console.log(chkIt('dasda  s'));
+    </script>
+</body>
+</html>

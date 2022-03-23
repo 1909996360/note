@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闭包实际场景运用</title>
+</head>
+<body>
+    <script>
+        /*
+            // 1、防抖节流函数
+            // 防抖
+            function debounce(fn,delay = 300){
+                let timer; //闭包引用的外界变量
+                return function(){
+                    const args = arguments
+                    if(timer){
+                        clearTimeout(timer)
+                    }
+                    timer = setTimeout(()=>{
+                        fn.apply(this,args)
+                    },delay)
+                }
+            }
+
+            // 2、使用闭包可以在JavaScript中模拟块级作用域
+            function outputNumbers(count){
+                (function(){
+                    for(var i = 0; i<count;i++){
+                        alert(i)
+                    }
+                })()
+            }
+            alert(i) //导致一个错误
+
+            // 3、闭包可以用于在对象中创建私有变量
+            var aaa = (function(){
+                var a = 1
+                function bbb(){
+                    a++;
+                    console.log(a)
+                }
+                function ccc(){
+                    a++;
+                    console.log(a)
+                }
+                return{
+                    b:bbb ,
+                    c:ccc,
+                }
+            })()
+
+            console.log(aaa.a) //undefined
+            aaa.b() // 2
+            aaa.c() // 3
+        */
+    </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>如何实现数组去重</title>
+</head>
+<body>
+    <script>
+        // 使用Map去重
+        function quchong1(arr){
+            const newArr = []
+            arr.reduce((pre,next)=>{
+                if(!pre.get(next)){
+                    pre.set(next,1)
+                    newArr.push(next)
+                }
+                return pre
+            },new Map())
+            return newArr
+        }
+
+        // 使用Set去重
+        function quchong(arr){
+            return [...new Set(arr)]
+        }
+
+        const a = [{a:1},{b:1}]
+        const b = [{a:1},{b:1}]
+
+        const c = a.concat(b)
+
+        // 无法去重
+        const e = [...new Set(c)]
+
+        // 开始去重
+        const d = [...new Set(c.map(t=>JSON.stringify(t)))].map(s=>JSON.parse(s))
+
+        // 去重远离
+
+        /*
+            set方法：比较的是内存地址，也就是0，-0。比===更加精准
+            而每一个对象都是有自己的相对应的内存地址，所以set方法他是无法去重
+            上例就是让set进行字符串，通过字符串去重，然后再进行JSON.parse转换回来
+            注意的是：JSON方法转换是无法转换function一些数据的
+
+            但是当我们将对象进行转换成字符串的时候，则set所比较的是是否相同，所占的空间、字节码是否一致，这时所比较的就是string === string
+        */ 
+    </script>
+</body>
+</html>
