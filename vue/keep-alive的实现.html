@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>keep-alive</title>
+</head>
+<body>
+    <script>
+        /*  
+            作用：实现组件缓存，保持这些组件的状态，以避免反复渲染导致的性能问题，需要缓存组件频繁切换，不需要重复渲染
+            场景：tabs标签页、后台导航、vue性能优化
+            原理：vue.js内部将DOM节点抽象成一个个的VNode的节点，keep-alive组件的缓存也是基于VNode节点的而不是直接存储DOM结构，它将满足条件的组件在cache对象那个中缓存起来，在需要重新渲染的时候再将vnode节点从cache对象中取出并渲染
+        */ 
+    </script>
+</body>
+</html>

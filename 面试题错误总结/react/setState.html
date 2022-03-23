@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>setState</title>
+</head>
+<body>
+    <script>
+        // 参考地址：https://juejin.cn/post/6844903636749778958
+        /setState/ 
+
+        /1、合成事件的setState/
+        /*
+            首先了解一下什么是合成事件，react为了解决跨平台，兼容性问题，自己封装了一套事件机制，代理了原生的事件，想在jsx中常见的onClick、onChange这些都是合成事件
+        */  
+
+        class App extends Component{
+            state = {val:0}
+            
+            increment = () => {
+                this.setState({val:this.state.val + 1})
+                console.log(this.state.val); // 输出的是更新前的val -> 0
+            }
+
+            render(){
+                return(
+                    <div onClick={this.increment}>
+                        {`Count is: ${this.state.val}`}    
+                    </div>
+                )
+            }
+        }
+
+        /*
+            合成事件中的setState写法比较常见，点击事件里去改变this.state.val的状态值，在increment事件中打个断点可以看到调用栈
+        */ 
+
+        /2、生命周期中的setState/
+        class App extends Component{
+            state = {val:0}
+
+            componentDidMount(){
+                this.setState({val:this.state.val + 1})
+                console.log(this.state.val); // 输出的还是更新前的值 ---> 0
+            }
+            render(){
+                return(
+                    <div>
+                        {`Counter is：${this.state.val}`}    
+                    </div>
+                )
+            }
+        }
+
+        /*
+            其实还是和合成事件一样，当componentDidmount执行的时候，react内部并没有更新，执行完componentDidmount后才去commitUpdateQueue更新，这就导致你在componentDidmount中setState完去拿的结果还是更新前的值
+        */
+       
+        /3、原生事件中的setState/
+        class App extends Component{
+            state = {val:0}
+
+            changeValue = () =>{
+                this.setState({val : this.state.val + 1})
+                console.log(this.state.val); // 输出的是更新后的值 ---> 1
+            }
+
+            componentDidMount(){
+                document.body.addEventListener('click',this.changeValue,false)
+            }
+
+            render(){
+                return(
+                    <div>
+                        {`Counter is:${this.state.val}`}    
+                    </div>
+                )
+            }
+        } 
+
+        /*
+            原生事件是指非react合成事件，原生自带的事件监听addEventListener，或者也可以用原生js、jq直接document.querySelector().onclick这种绑定事件的形式都属于原生事件
+
+            原生事件的调用栈比较简单，因为没有走合成事件的那一大堆，直接触发click事件，并不像合成事件或钩子函数中被return，所以当你在原生事件中setState中，能同步拿到更新后的state值
+        */ 
+
+        /4、setTimeout中的setState/
+            class App extends Component{
+                state = {val:0}
+                
+                componentDidMount(){
+                    setTimeout(_ =>{
+                        this.setState({val:this.state.val + 1})
+                        console.log(this.state.val); // 输出更新后的值 ---> 1
+                    },0)
+                }
+
+                render(){
+                    return(
+                        <div>
+                            {`Counter is:${this.state.val}`}    
+                        </div>
+                    )
+                }
+            }
+
+            /*
+                在setTimeout中去setState并不算是一个单独的场景，随着外层去决定的，如果你可以在合成事件中setTimeout，可以在钩子函数中setTimeout，也可以在原生事件setTimeout，但是不管是哪个场景下，基于eventloop的模型下，setTimeout中里去setState总能拿到最新的state值
+
+                举例：
+                    比如之前的合成事件，由于你是setTimeout(_ =>{this.setState()},0) 是在try代码块中，当你try代码块执行到setTimeout的时候，把它丢到队列里，并没有去执行，而是先执行的finally代码块，等finally执行完了，isBatchUpdates又变为了false，导致最后去执行队列里的setState时候，requestWork走的是和原生事件一样的，所以表现就会和原生事件一样，可以同步拿到最新的state的值
+            */ 
+
+            /5、setState中的批量更新/
+             class App extends Component{
+                 state = { val : 0}
+
+                 bacthUpdates = () => {
+                     this.setState({val:this.state.val + 1})
+                     this.setState({val:this.state.val + 1})
+                     this.setState({val:this.state.val + 1})
+                 }
+
+                 render(){
+                     return(
+                         <div onClick = {this.bacthUpdates}>
+                            {`Counter is${this.state.val}`} // 1
+                        </div>
+                     )
+                 }
+             }  
+
+            /*
+                上面的结果是1，在setState的时候react内部会创建一个updateQueue，相同的key会被覆盖，只会对最后一次setState进行更新
+            */  
+
+            class App extends React.Component {
+                state = { val: 0 }
+
+                componentDidMount() {
+                    this.setState({ val: this.state.val + 1 })
+                        console.log(this.state.val)
+
+                    this.setState({ val: this.state.val + 1 })
+                        console.log(this.state.val)
+
+                    setTimeout(_ => {
+                        this.setState({ val: this.state.val + 1 })
+                        console.log(this.state.val);
+
+                        this.setState({ val: this.state.val + 1 })
+                        console.log(this.state.val)
+                    }, 0)
+                }
+
+                render() {
+                    return <div>{this.state.val}</div>
+                }
+            }
+
+            /*
+                结合上面的分析，钩子函数中的setState无法立马拿到更新后的值，所以前两次输出都是0，当执行到steTimeout里的时候，前面两个state的值已经被更新，由于setState批量更新的策略，this.state.val只对最后一次生效，为1，而在setTimeout中setstate是可以同步拿到更新结果，所以setTimeout中的两次输出2，3。最终结果就是为0，0，2，3
+            */ 
+
+            /*
+                总结：
+                    1、setState只在合成事件和钩子函数中是“异步”的，在原生事件和setTimeout中都是同步的
+                    2、setState的“异步”并不是说内部由异步代码实现，其实本身执行的过程和代码都是同步的，只是合成事件和钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形成了所谓的“异步”，当然也可以通过第二个参数setState中的callback拿到更新后的结果
+                    3、setState的批量更新优化也是建立在“异步”（合成事件、钩子函数）之上的，在原生事件和setTimeout中不会批量更新，在“异步”中如果对同一个值进行多次setState，setState的批量更新策略会对其进行覆盖，取最后一次的执行，如果是同时setState多个不同的值，在更新时会对其进行合并批量更新
+            */ 
+    </script>
+</body>
+</html>

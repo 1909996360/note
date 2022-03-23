@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue修饰符</title>
+</head>
+<body>
+    <script>
+        // 参考地址：https://juejin.cn/post/7048496699907506207
+        / 一、.lazy / 
+        /*
+            顾名思义，lazy修饰符作用是，改变输入框的值时绑定的lazyValue不会改变，当光标离开输入框时，v-model绑定的值lazyValue才会改变
+        */ 
+        /二、 .trim/
+        /*
+            trim修饰符的作用是把v-model绑定的值得首尾空格去掉，在实际开发中，一般用于搜索框得内容修饰，过滤掉用户多输入前后空格导致内容查不出来得情况
+        */  
+        /三、 .number/
+        /*
+            number修饰符得作用是将值转为数字，但是先输入字符串和先输入数字，是两种情况，当然也可以通过 type = 'number' 来实现这个功能，当然也会遇到一个问题，比如我们平常需要控制两位小数得价格时，就会有问题，可以使用下面方法
+        */  
+        <input type="text" onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')" />
+
+        /四、 .stop/
+        /*
+            stop修饰符得作用是阻止事件冒泡
+        */  
+
+        /五、 .capture/
+        /*
+            事件冒泡默认是由外往里冒泡，capture修饰符得作用是反过来得，从内往外捕获
+        */  
+
+        /六、 .self/
+        /*
+            self修饰符作用是，只有点击事件绑定得本身才会触发事件
+        */  
+
+        /七、 .once/
+        /*
+            once修饰符得作用是，事件只执行一次
+        */  
+
+        /八、 .prevent/
+        /*
+            prevent修饰符得作用是阻止默认事件（例如a标签得跳转）
+
+        */  
+
+        /九、 .native/
+        /*
+            native修饰符是加在自定义组件得事件上，保证事件能执行
+        */  
+
+        /十、 .left、.right、.middle/
+        /*
+            这三个修饰符十鼠标得左中右按键触发事件
+        */  
+
+        /十一、 .sync/
+        /*
+            当父组件传值进子组件，子组件想要改变这个值时（一般直接修改会报错）
+        */ 
+
+        /十二、.keyCode/
+        /*
+            主要用于使用按键触发事件。在项目中用的最多得就是回车触发搜索功能
+
+            vue提供得keyCode:
+            .enter
+            .tab
+            .delete
+            .space
+            .esc
+            .up
+            .down
+            .left
+            .right
+            .ctrl
+            .alt
+            .meta
+            .shift
+
+            也可以通过键码去触发，具体键码
+
+            可以通过全局config.keyCodes 对象自定义案件修饰符别名
+            Vue.config.keyCodes.f1 = 112
+        */  
+
+        /十三、 .passive/
+        /*  
+            主要用于给onscroll事件加一个类似.lazy的修饰符，在pc端是没有问题的，但在移动端，会让我们的网页变卡
+        */  
+
+        /十四、 .camel/
+        /*
+            由于html特性是不区分大小写的，.camel修饰符允许在使用dom模板时将v-bind属性名称驼峰化，例如svg的viewBox属性：实际会被渲染为
+        */  
+    </script>
+</body>
+</html>

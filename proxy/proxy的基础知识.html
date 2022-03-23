@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>proxy的基础知识</title>
+</head>
+<body>
+    <script>
+        // 参考地址：https://juejin.cn/post/6975858843729264653
+        /proxy知识梳理/ 
+        /*  
+            proxy意思为代理，即在访问对象之前建立一道拦截，任何访问该对象的操作之前都会通过这道拦截
+            概念：
+            1、proxy是es6新增的一个特性，翻译过来意思就是'代理',用在这里表示由他来代理某些操作，proxy能让我们能够以简洁易懂的方式控制外部对对象的访问，其功能非常类似于设计模式中的代理模式
+            2、proxy可以理解成，在目标对象之前架设一层拦截，外界对该对象的访问，都必须先通过这层拦截，因此提供了一种机制，可以对外界的访问进行过滤和改写
+            3、使用proxy的核心优点是可以交由它来处理一些非核心逻辑（如：读取或设置对象的某些属性前记录日志，设置对象的某些属性值等，需要验证某些属性的访问控制等），从而可以让对象只需关注于核心逻辑，达到关注点分离，降低对象复杂度等目的
+        */ 
+         /proxy可以拦截什么/
+       /*
+            1、getPrototypeOf()
+            2、setPrototypeOf()
+            3、isExtensible()
+            4、preventExtensions()
+            5、getOwnPropertyDescriptor()
+            6、defineProperty()
+            7、has()
+            8、get()
+            9、set()
+            10、deleteProperty()
+            11、ownKeys()
+            11、apply()
+            12、construct()
+       */  
+        /proxy语法/ 
+        let proxy = new Proxy(target,handler)
+        /*
+            这就是proxy的使用方法，所有的用法都是上面的方法，不同的是handler里面拦截的设置
+            new Proxy():表示生成一个proxy实例
+            target:表示要拦截的目标对象
+            handler:是一个对象，用来定制拦截方法
+            想要handler里的拦截方法生效，后续所有操作必须使用proxy的实例
+        */   
+        
+        /get/
+        // get方法在日常开发中应该是使用最多的方法了，先看一下在不使用proxy时候的场景
+        let user = {
+            name:'张三',
+        }
+        console.log(user.name); //张三
+        console.log(user.age); // undefined
+
+        /*
+            上面代码中，使用let定义了一个对象，并且有一个name属性
+            然后分别打印粗name和age属性，结果很明显，age属性未定义会输出undefined
+            但是在实际项目中我们是不希望返回undefined这种值给页面的，下面我们看一下proxy解决这个问题
+        */ 
+
+        let handler = {
+            // 定义了get方法的拦截器
+            get:function(target,key){
+                // target:要拦截的对象
+                // key:修改的属性
+                if(target.hasOwnProperty(key)){
+                    if(key == 'name'){
+                        return '法外狂徒--张三'
+                    }
+                }
+                return '18'
+            }
+        }
+        let obj = {
+            name:'张三'
+        }
+        let user = new Proxy(obj,handler)
+    </script>
+</body>
+</html>

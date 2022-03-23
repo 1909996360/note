@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>为什么v-for和v-if不建议用在一起</title>
+</head>
+<body>
+    <script>    
+        /*
+            1、当v-for和v-if处于同一节点时，v-for的优先级比v-if更高，这意味着v-if将分别重复运行于每个v-for循环中。如果要遍历的数组很大，而真正要展示的数据很少时，这将造成很大的性能浪费
+            2、这种场景建议使用computed。先对数据进行过滤
+        */
+    </script>
+</body>
+</html>

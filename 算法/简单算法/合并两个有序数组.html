@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>合并两个有序数组</title>
+</head>
+<body>
+    <script>
+        /*
+            题目：已知数组 nums1 = [1,2,3,0,0,0]， m = 3
+                          nums2 = [2,5,6]， n = 3
+            输出：[1,2,2,3,5,6]
+        */ 
+        // 1、自己的写法
+        var merge = function(nums1, m, nums2, n) {
+            nums1 = [...nums1,...nums2].sort()
+                for(let i = 0; i< m+n; i++){
+                        nums1[i] == 0 &&  nums1.splice(i,1)
+                }
+        };
+        
+
+        // 2、官方解法
+        // 2.1、直接合并后排序
+        var merge = function(nums1, m, nums2, n) {
+            nums1.splice(m, nums1.length - m, ...nums2);
+            nums1.sort((a, b) => a - b);
+        };
+        // 2.2、双指针
+        var merge = function(nums1, m, nums2, n) {
+            let p1 = 0, p2 = 0;
+            // 创建一个长度为m+n的数组，并且内容填充为0
+            // 即 sorted = [0,0,0,0,0,0]
+            const sorted = new Array(m + n).fill(0);
+            var cur;
+            // while 循环判断，如果判断为false及跳出循环，为true就会一直跑循环
+            // 判断p1是否小于m或者p2是否小于n
+            while (p1 < m || p2 < n) {
+                if (p1 === m) {
+                    cur = nums2[p2++];
+                } else if (p2 === n) {
+                    cur = nums1[p1++];
+                } else if (nums1[p1] < nums2[p2]) {
+                    cur = nums1[p1++];
+                } else {
+                    cur = nums2[p2++];
+                }
+                sorted[p1 + p2 - 1] = cur;
+            }
+            for (let i = 0; i != m + n; ++i) {
+                nums1[i] = sorted[i];
+            }
+        };
+
+        // 2.3、逆向双指针
+        var merge = function(nums1, m, nums2, n) {
+            let p1 = m - 1, p2 = n - 1;
+            let tail = m + n - 1;
+            var cur;
+            while (p1 >= 0 || p2 >= 0) {
+                if (p1 === -1) {
+                    cur = nums2[p2--];
+                } else if (p2 === -1) {
+                    cur = nums1[p1--];
+                } else if (nums1[p1] > nums2[p2]) {
+                    cur = nums1[p1--];
+                } else {
+                    cur = nums2[p2--];
+                }
+                nums1[tail--] = cur;
+            }
+        };
+    </script>
+</body>
+</html>

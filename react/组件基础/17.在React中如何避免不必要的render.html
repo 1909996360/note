@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在React中如何避免不必要的render</title>
+</head>
+<body>
+    <script>
+        /*
+            React基于虚拟DOM和高效Diff算法的完美配合，实现了对DOM最小粒度的更新，大多数情况下React对DOM的渲染效率足以业务日常，但在个别复杂业务场景下，性能问题依然会困扰我们，此时需要采取一些措施来提升运行性能，其很重要的一个方向，就是避免不必要的渲染
+
+            · shouldComponentUpdate 和 PureComponent
+                在React类组件中，可以利用shouldComponentUpdate或者PureComponent来减少因父组件更新而触发子组件的render，从而达到目的。shouldComponentUpdate来决定是否组件是否重新渲染，如果不希望组件重新渲染，返回false即可
+
+            · 利用高阶组件
+                在函数组件中，并没有shouldComponentUpdate这个生命周期，可以利用高阶组件，封装一个类似PureComponent的功能
+
+            · 使用React.memo
+                React.memo是React16.6新的一个API，用来缓存组件的渲染，避免不必要的更新，其实也是一个高阶组件，与PureComponnet十分类似，但不同的是，React.mome只能用于函数组件
+
+            
+        */ 
+    </script>
+</body>
+</html>

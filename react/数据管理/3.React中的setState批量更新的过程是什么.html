@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React中的setState批量更新的过程是什么</title>
+</head>
+<body>
+    <script>
+        /*
+            调用setSate时，组件的state并不会理解改变，setState只是把要修改的state放入一个队列，React会优化真正的执行时机，并出于性能原因，会将React事件处理程序中的多次React事件处理程序中的多次setState的状态修改合并成一次状态修改，最终更新只产生一次组件及其子组件的重新渲染，这对于大型应用程序中的性能提升至关重要
+
+            this.setState({
+            count: this.state.count + 1    ===>    入队，[count+1的任务]
+            });
+            this.setState({
+            count: this.state.count + 1    ===>    入队，[count+1的任务，count+1的任务]
+            });
+                                                    ↓
+                                                    合并 state，[count+1的任务]
+                                                    ↓
+                                                    执行 count+1的任务
+
+
+            需要注意的是，只要同步代码还在执行，”攒起来“这个动作就不会停止（注：这之所以多次+1，最终只有一次生效，是因为在同一个方法中多次setState的合并动作不是单纯地将更新累加，比如这里对于相同属性地设置，React只会为其保留最后一次地更新）
+        */ 
+    </script>
+</body>
+</html>

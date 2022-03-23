@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue组件传值的六种方式</title>
+</head>
+<body>
+    <script>
+        // 参考地址：https://segmentfault.com/a/1190000019208626
+        /*
+            总结：
+                1、props/$emit
+                2、事件总线 eventBus : $emit、$on
+                3、vuex
+                4、$attts、$listeners
+                5、provide、inject
+                6、$parent、$children与ref
+
+
+            · 父子通信：
+                父向子传递数据是通过props，子向父是通过events($emit)；通过父链/子链也可以通信($parent\$children),ref也可以访问组件实例；provide/inject ： $attrs\$listeners
+
+            · 兄弟通信：
+                Bus、Vuex
+
+            
+        */ 
+        /方法一、props和$emit/
+        /*
+            1、父组件向子组件传值
+                子组件使用props定义需要传递的值，父组件将值传进来
+            2、子组件向父组件传值（通过事件形式）    
+                子组件通过$emit将值传递给父组件
+
+        总结：子组件通过events向父组件发送消息，实际上就是子组件把自己的数据发送到父组件
+        */ 
+
+        /方法二、$emit和$on/
+        /*
+            这种方式通过一个空的vue实例作为中央事件总线（事件中心），用它来触发事件和监听事件，巧妙而轻量地实现了任何组件间的通信，包括父子、兄弟、跨级。当项目比较大时，更好的可以选择vuex
+            1、创建一个空的bus.js文件，声明一个vue实例，并且暴露出去
+            2、在需要传值的组件内引入bus文件
+            3、父组件使用Bus.$emit('val',this.xxx),将值传出去
+            4、在子组件的created或mounted钩子函数Bus.$on('val',(data)=>{
+                this.xxx = data
+            }),接收到传来的值
+
+
+            注意：$on监听了自定义事件 data-a和data-b，因为有时不确定何时会触发事件，一般会在mounted或created钩子中来监听
+        */ 
+
+        /方法三、vuex/
+        /*
+            1、简要介绍vuex原理，
+                vuex实现了一个单向数据流，在全局拥有了一个state存放数据，当组件要更改state中的数据时，必须通过mutation进行，mutation同时提供了订阅者模式供外部插件调用获取state数据的更新，而当所有异步操作（常用于调用后端接口异步获取更新数据）或批量的同步操作需要走action，但action也是无法直接修改state的，还是需要通过mutation来修改state的数据，最后，根据state的变化，渲染到视图上
+
+            2、简要介绍各模块在流程中的功能
+              · vue components:vue组件，HTML页面上，负责接收用户操作等交互行为，执行dispatch方法触发对应action进行回应
+              · dispatch：操作行为触发方法，是唯一能执行action的方法
+              · actions:操作作为处理模块，由组件中的$store.dispatch('action名称',data1)来触发，然后有commit()来触发mutation的调用，间接更新state，负责处理vue Components接收到的所有交互行为，包含同步、异步操作，支持多个同名方法，按照注册的顺序依次触发
+              · commit：状态改变提交操作方法。对mutation进行提交，是唯一能执行mutation的方法
+              · mutations:状态改变操作方法，由actions中的commit('mutation名称')来触发，是vuex修改state的唯一推荐方法，该方法只能进行同步操作，且方法名只能全局唯一，操作之中会有一些hook暴露出来，以进行state的监控
+              · state：页面状态管理容器对象，集中存储Vue components中data对象的零散数据，全局唯一，以进行统一的状态管理，页面显示所需的数据从该对象中进行读取，利用vue的细粒度数据响应机制来进行高效的状态更新
+              · getters：state对象读取方法，图中没有单独列出该模块，应该被包含在了render中，vuecomponents通过该方法读取全局state对象
+
+            3、Vuex与localStorage
+               vuex是vue的状态管理器，存储的数据是响应式的，但是并不会保存起来，刷新之后就回到了初始状态。具体做法应该在vuex里数据改变的时候把数据拷贝一份保存到localStorage里面，刷新之后，如果localStorage里有保存的数据，取出来再替换store里的state
+
+               这里需要注意的是：由于vuex里，我们保存的状态，都是数组，而localStorage只支持字符串，所以需要用JSON转换
+        */  
+        /$attrs、$listeners/
+        /*
+            1、简介
+                多级组件嵌套需要传递数据时，通常使用的方法是通过vuex，但如果仅仅是传递数据，而不做中间处理，使用vuex处理，未免有点大材小用。所以用$attrs\$listeners
+
+                · $attrs:包含了父作用域中不被prop所识别的特性绑定，当一个组件没有声明任何prop时，这里会包含所有父作用域的绑定，并且可以通过v-bind="$attrs"传入内部组件，通常配合interitAttrs选项一起使用
+                · $listeners:包含了父作用域中的（不含.native修饰器的）v-on事件监听器，它可以通过v-on="$listeners"传入内部组件
+
+            如上图所示$attrs表示没有继承数据的对象，格式为{属性名：属性值}
+            简单来说，$attrs与$listeners是两个对象，$attrs里存放的是父组件中绑定的非props属性。$listeners里存放的是父组件中绑定的非原生事件
+        */  
+         
+        /provide、inject/
+        /*
+            1、简介
+                允许一个组件组件向其所有子孙后代注入一个依赖，不论组件层次有多深，并在起上下游关系成立的时间里始终生效，一言而避之：祖先组件中通过provide来提供变量，然后子孙组件中通过inject来注入变量
+
+                provide、inject 主要解决了跨级组件间的通信问题，不过他的使用场景，主要是子组件获取上级组件的状态，跨级组件间建立了一种主动提供与注入的关系
+
+            2、举个例子
+                A.vue
+                    export default{
+                        provide:{name:'zhw'}
+                    }
+                B.vue
+                    export default{
+                        inject:['name']
+                        mounted(){
+                            console.log(this.name) //zhw
+                        }
+                    }
+
+            可以看到，在A.vue里，我们设置了一个provide:name，值为zhw，他的作用就是将name这个变量提供给他的所有子组件，而在B.vue中，通过inject注入了从A组件中提供的name变量，那么在组件B中，就可以直接通过this.name访问这个变量了，它的值也是zhw，这就是provide、inject最核心的用法
+            需要注意的是：provide和inject绑定的并不是可响应的，这是刻意为之的，然而，如果你传入了一个可监听的对象，那么其对象的属性还是可响应的
+            所以，上面A.vue的name如果改变了，B.vue的this.name是不会改变的，仍然是zhw
+
+            3、provide与inject怎么实现数据响应式
+            一般来说，有两种方法：
+                    · provide祖先组件的实例，然后在子孙组件中注入依赖，这样就可以在子孙组件中直接修改祖先组件的实例的属性，不过这种方法有个缺点就是实例上挂载很多没有必要的东西比如props，methods
+                    · Vue.observable优化响应式provide
+        */   
+
+        /$parent、$children、与ref/
+        /*
+            · ref:如果在普通的DOM元素上使用，引用指向就是DOM元素，如果用在子组件上，引用就指向组件实例
+            · $parent/$children:访问父、子实例
+
+            需要注意的是：这两种都是直接得到组件实例，使用后可以直接调用组件的方法或访问数据
+        */  
+    </script>
+</body>
+</html>

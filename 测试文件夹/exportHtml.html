@@ -1,0 +1,635 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>区运营报表</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <style>
+    html{
+      width:884px;
+      margin: 0 auto;
+      /* border: 1px solid #ccc; */
+    }
+    body{
+      padding:0;
+    }
+    .container-title{
+      font-weight: bold;
+    }
+    div{
+      margin: 20px 0;
+    }
+    tr,td{
+      text-align: center;
+    }
+    .account-table{
+      background-color: #fff2cc !important;
+    }
+    @media print {
+        body {-webkit-print-color-adjust: exact;}
+        .no-print {display: none;}
+    }
+  </style>
+  <style media="print">
+    @page {
+      margin-bottom: 0mm;
+      margin-top: 0mm;
+    }
+    
+</style>
+</head>
+  
+  <body>
+      <div class="container-div">
+        <div class="container-title">
+           <div class="title" id="title" style="font-weight: bold;font-size: 20px;text-align: center;">
+            随约平台运营情况工作汇报
+           </div>
+        </div>
+        <div class="table-div">
+            <div class="table-title" style="text-indent: 20px;">
+              一、平台建设完成情况汇总（双周提供）
+            </div>
+            <div class="table-second-title" style="text-indent: 20px;">
+              (一) 平台注册用户
+            </div>
+            <div class="table-third-title" style="text-indent: 20px;font-weight: bold;">
+              1. 全区随约平台注册用户统计表
+            </div>
+            <!--平台注册用户统计表-->
+            <div class="table-container-first">
+              <table class="account-table" border="1" width="874" bordercolor="black" cellspacing="0" cellpadding="5">
+                <tr>
+                  <td colspan="5">随约平台注册用户统计表</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: bold;">街镇名称</td>
+                  <td style="font-weight: bold;">累计用户数</td>
+                  <td>近两周新增用户</td>
+                  <td>示范社区累计注册用户数</td>
+                  <td>非示范社区累计注册用户数</td>
+                </tr>
+                </table>
+            </div>
+            <div class="table-third-title" style="text-indent: 20px;">
+              2. 示范社区注册用户数统计表
+            </div>
+            <!--全区随约平台注册用户统计表-->
+            <div class="table-container-second">
+              <table style="background-color: #e2efda;" class="register-table" border="1" width="874" bordercolor="black" cellspacing="0" cellpadding="5">
+               <tr>
+                  <td colspan="4">随约平台示范社区注册用户统计表</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: bold;">街镇名称</td>
+                  <td style="font-weight: bold;">社区名称</td>
+                  <td>近两周新增用户</td>
+                  <td>累计注册用户数</td>
+                  
+                </tr>
+              </table>             
+            </div>
+            <div class="table-third-title" style="text-indent: 20px;">
+              3. 非示范社区注册用户数统计表；
+            </div>
+          
+            <div class="table-container-third">
+              <table class="orgCode-reigister-table" border="1" width="874" bordercolor="black" cellspacing="0" cellpadding="5">
+                <tr>
+                  <td colspan="4">随约平台非示范社区注册用户统计表</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: bold;">街镇名称</td>
+                  <td style="font-weight: bold;">社区名称</td>
+                  <td style="font-weight: bold;">近两周新增用户</td>
+                  <td style="font-weight: bold;">累计注册用户数</td>
+                </tr>
+              </table>
+            </div>
+          
+            <div class="table-third-title" style="text-indent: 20px;">
+              (二) 社区组织动员体系（含示范社区和非示范社区）：
+            </div>
+            <div class="table-third-title" style="text-indent: 20px;font-weight: bold;">
+              1. 全区社区组织动员体系建设情况一览表
+            </div>
+            <div class="table-container-fourth">
+              <table class="dongyuan-table" border="1" width="874" bordercolor="black" cellspacing="0" cellpadding="5">
+                  <tr>
+                    <td>指标</td>
+                    <td>市级示范社区</td>
+                    <td>区级示范社区</td>
+                    <td>非示范社区</td>
+                    <td>新增数</td>
+                    <td>合计</td>
+                  </tr>
+                  </table>
+            </div>
+            <div class="table-third-title" style="text-indent: 20px;font-weight: bold;">
+              2. 示范社区“社区组织动员体系”（居民/网上家园）建设情况统计
+            </div>
+            <!--示范社区动员组织体系-->
+            <div class="table-container-firth">
+              <table class="dongyuan-build-table" border="1" width="874" bordercolor="black" cellspacing="0" cellpadding="5">
+                <tr>
+                  <td colspan="4">随约平台示范社区社区动员体系建设情况统计表</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: bold;">街镇名称</td>
+                  <td style="font-weight: bold;">社区名称</td>
+                  <td>近两周新增用户</td>
+                  <td>累计用户数</td>
+                  
+                </tr>
+                </table>
+            </div>
+            <div class="table-third-title" style="text-indent: 20px;font-weight: bold;">
+              3. 非示范社区“社区组织动员体系”（居民/网上家园）入驻情况
+            </div>
+            <!--非示范社区动员体系入驻情况-->
+            <div class="table-container-firth">
+              <table class="dongyuan-reBuild-table" border="1" width="874" bordercolor="black" cellspacing="0" cellpadding="5">
+              <tr>
+                  <td colspan="4">随约平台示范社区社区动员体系建设情况统计表</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: bold;">街镇名称</td>
+                  <td style="font-weight: bold;">社区名称</td>
+                  <td>近两周新增用户</td>
+                  <td>累计用户数</td>
+                </tr>
+                </table>
+                
+            </div>
+        </div>
+        <div class="footer-div">
+          <div class="footer-continer" style="text-align: right;text-indent: 20px;">
+            随约网上驿站运营单位：
+          </div>
+          <div class="footer-continer" style="text-align: right;text-indent: 20px;">
+           广州列丰信息科技有限公司
+          </div>
+          <div class="footer-continer" style="text-align: right;text-indent: 20px;">
+           <span class="time-span"></span>
+          </div>
+        </div>
+        <div class="footer-div">
+          <div class="footer-continer" style="text-align: right;text-indent: 20px;">
+            联系人：谭南
+          </div>
+          <div class="footer-continer" style="text-align: right;text-indent: 20px;">
+            联系方式：15915744691
+          </div>
+        </div>
+      </div>
+      
+  
+  
+      <script>
+        // 创建一个假数组
+        var accountList = []
+        // 创建一个假数组
+        var registerList = [
+          // {
+          //   streetName:'南沙街道',
+          //   list:[
+          //     {
+          //       num:'1',
+          //       orgName:'南沙社区',
+          //       count:'100'
+          //     },
+          //     {
+          //       num:'2',
+          //       orgName:'逸涛社区',
+          //       count:'100'
+          //     },
+          //     {
+          //       num:'3',
+          //       orgName:'南北台社区',
+          //       count:'100'
+          //     },
+          //   ]
+          // },
+          // {
+          //   streetName:'黄阁镇',
+          //   list:[
+          //     {
+          //       num:'4',
+          //       orgName:'黄阁社区',
+          //       count:'100'
+          //     },
+          //     {
+          //       num:'5',
+          //       orgName:'梅山社区',
+          //       count:'100'
+          //     },
+          //     {
+          //       num:'6',
+          //       orgName:'凤凰社区',
+          //       count:'100'
+          //     },
+          //   ]
+          // },
+          // {
+          //   streetName:'万顷沙镇',
+          //   list:[
+          //     {
+          //       num:'7',
+          //       orgName:'年丰村',
+          //       count:'100'
+          //     }
+          //   ]
+          // },
+        ]
+        
+        // 创建一个示范社区注册用户统计表
+        var orgCodeRegisterList = []
+        
+        // 创建全区社区动员体系情况一览表
+        var dongyuanList = [
+          // {
+          //   zhibiao:'基本数据',
+          //   shiji:'4',
+          //   quji:'12',
+          //   fei:'133',
+          //   add:'新增数',
+          //   account:'149'
+          // },
+          // {
+          //   zhibiao:'完成组织架构导入的社区',
+          //   shiji:'4',
+          //   quji:'12',
+          //   fei:'133',
+          //   add:'新增数',
+          //   account:'149'
+          // },
+          // {
+          //   zhibiao:'已启动推广的社区',
+          //   shiji:'4',
+          //   quji:'12',
+          //   fei:'133',
+          //   add:'新增数',
+          //   account:'149'
+          // },
+          // {
+          //   zhibiao:'入驻人数',
+          //   shiji:'4',
+          //   quji:'12',
+          //   fei:'133',
+          //   add:'新增数',
+          //   account:'149'
+          // },
+          // {
+          //   zhibiao:'已创建工作群的社区',
+          //   shiji:'4',
+          //   quji:'12',
+          //   fei:'133',
+          //   add:'新增数',
+          //   account:'149'
+          // },
+          // {
+          //   zhibiao:'辖区共建单位入住数量',
+          //   shiji:'4',
+          //   quji:'12',
+          //   fei:'133',
+          //   add:'新增数',
+          //   account:'149'
+          // },
+          // {
+          //   zhibiao:'提供服务的市场主题数量',
+          //   shiji:'4',
+          //   quji:'12',
+          //   fei:'133',
+          //   add:'新增数',
+          //   account:'149'
+          // },
+        ]
+        // 创建社区组织动员体系建设情况统计表
+  
+        var dongyuanBuildList = []
+       
+        // 创建非示范社区动员组织体系入驻情况统计表
+        var dongyuanReBuildList = []
+       
+        // 创建其他数据情况统计表 
+        var otherList = []
+  
+        // 循环遍历各村镇平台账号申请开通情况方法
+        function setAccountList(accountList,name){
+          var className = document.getElementsByClassName(name)
+          if(accountList && accountList.length){
+            let lastCount = accountList.pop()
+            for(let i = 0; i < accountList.length;i++ ){
+              // 动态创建tr
+              let tr = document.createElement('tr')
+              className[0].appendChild(tr)
+              let obj = accountList[i]
+              if(obj){
+                Object.keys(obj).forEach((key,index)=>{
+                    let td = document.createElement('td')
+                    td.innerHTML = obj[key]
+                    tr.appendChild(td) 
+                })
+              }
+            }
+            if(lastCount){
+              let tr = document.createElement('tr')
+              className[0].appendChild(tr)
+              Object.keys(lastCount).forEach((key)=>{
+                let td = document.createElement('td')
+                // if(lastCount[key] == '小计'){
+                //   td.colSpan = '2'
+                // }
+                td.innerHTML = lastCount[key]
+                // td.style.fontWeight = 'bold'
+                // td.style.fontSize = '20px'
+                tr.appendChild(td)
+                
+              })
+            }
+          }
+        }
+        
+        // 循环遍历示范社区用户统计表
+        function registerFun(list,name){
+          let className = document.getElementsByClassName(name)
+          if(list && list.length){
+              for(let i = 0 ; i < list.length; i++){
+                let item = list[i] 
+                // 动态创建tr
+                if(item.list && item.list.length){
+                  for(let j = 0 ; j <item.list.length;j++){
+                      if(j == 0){
+                          item.list[j].streetName = item.streetName
+                      }
+                      let listItem = item.list[j]
+                      let tr = document.createElement('tr')
+                      className[0].appendChild(tr)
+                      Object.keys(listItem).forEach((key)=>{
+                        let td = document.createElement('td')
+                        if(key == 'streetName'){
+                          td.rowSpan = item.list.length
+                        }
+                        td.innerHTML = listItem[key]
+                        tr.appendChild(td)
+                  })
+                }
+              }  
+            }
+          }
+        } 
+  
+        // 改变对象的属性顺序
+        function objsort(obj){
+            var keyArr = [],valArr = [];
+            for (var key in obj) {
+                    keyArr.push(key);
+                    valArr.push(obj[key]);
+            }
+  
+            for (var i = 0, len = valArr.length; i < len; i++) {
+                for (var j = 0; j < len - i; j++) {
+                  var keyTemp, valTemp;
+                  if (valArr[j] < valArr[j + 1]) {  //从大到小排序
+                  //if (valArr[j] > valArr[j + 1]) { //从小到大排序
+                        valTemp = valArr[j];
+                        valArr[j] = valArr[j + 1];
+                        valArr[j+1] = valTemp;
+                        keyTemp = keyArr[j];
+                        keyArr[j] = keyArr[j + 1];
+                        keyArr[j+1] = keyTemp;
+                    }
+                }
+            }
+            var newobj={};
+            for(var i=0;i<valArr.length;i++){
+                newobj[''+keyArr[i]+'']=obj[keyArr[i]];
+            }
+            return newobj;
+        }
+        
+        // 获取链接参数方法
+        function getQueryString(name) {
+            var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+                return unescape(r[2]);
+            }
+            return null;
+        }
+
+         function formatDate(date, fmt) {
+            var o = {
+                "M+": date.getMonth() + 1, //月份 
+                "d+": date.getDate(), //日 
+                "h+": date.getHours(), //小时 
+                "m+": date.getMinutes(), //分 
+                "s+": date.getSeconds(), //秒 
+                "q+": Math.floor((date.getMonth() + 3) / 3), //季度 
+                "S": date.getMilliseconds() //毫秒 
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+        
+        
+        // 获取链接地址带参
+        const dev = getQueryString('dev')
+        const startDate = getQueryString('startDate')
+        const zoneCode = getQueryString('zoneCode')
+        const token = getQueryString('token')
+        const codeName = decodeURI(getQueryString('codeName')) 
+        const compareWeek = getQueryString('compareWeek')
+        // 判断当前所处环境，生产用生产的地址，测试用测试的地址
+        var proxyUrl = ''
+        if(dev == 'test'){
+          proxyUrl = 'https://liefeng-gateway.test.gongxiangplat.com/apps/sy-manage/sy-manage/'
+        }else{
+          proxyUrl = 'https://api.gateway.prod.liefengtech.com/'
+        }
+        
+        let timeSpan = document.getElementsByClassName('time-span')
+        timeSpan[0].innerHTML = formatDate(new Date(),'yyyy-MM-dd')
+
+         function getUrl(url) {
+            $.ajax({
+                type : "GET",
+                url : `${proxyUrl}${url}?statDate=${startDate}&zoneCode=${zoneCode}`,
+                async:false,
+                beforeSend:function(xhr){
+                  xhr.setRequestHeader("Authorization", token);
+                },
+                success : function(res) {
+                   const data = res.data
+                   accountList = []
+                   registerList = []
+                   orgCodeRegisterList = []
+                   dongyuanBuildList = []
+                   dongyuanReBuildList = []
+                    if(res && res.code == 200 && data){
+                        if(data.orgManageWeeklyStreetVos && data.orgManageWeeklyStreetVos.length){
+                          data.orgManageWeeklyStreetVos.map(item =>{
+                            accountList.push({
+                              streetName:item.streetName,
+                              orgNum:item.totalUser,
+                              takeAcc:item.twoWeekNew,
+                              noneAcc:item.noOnLineCommunityUser,
+                              onlyOne:item.onLineCommunityUser
+                            })
+                          })  
+                          setAccountList(accountList,'account-table')
+                        }
+                        if(data.orgManageWeeklyVos && data.orgManageWeeklyVos.length){
+                          data.orgManageWeeklyVos.map(item =>{
+                              if(item.isOnline && item.isOnline == '1'){
+                                // 当前是示范社区
+                                 registerList.push({
+                                  streetName: item.streetName ? item.streetName : '',
+                                  orgName:item.orgName ? item.orgName : '',
+                                  num:item.userLately ? item.userLately : '-',
+                                  count:item.userTotal ? item.userTotal : '-',
+                                 })
+
+                                 dongyuanBuildList.push({
+                                  streetName: item.streetName ? item.streetName : '',
+                                  orgName:item.orgName ? item.orgName : '',
+                                  num:item.twoWeekOnlineHome ? item.twoWeekOnlineHome : '-',
+                                  count:item.onlineHome ? item.onlineHome : '-',
+                                 })
+                              }else{
+                                // 当前是非示范社区
+                                orgCodeRegisterList.push({
+                                  streetName: item.streetName ? item.streetName : '',
+                                  orgName:item.orgName ? item.orgName : '',
+                                  num:item.userLately ? item.userLately : '-',
+                                  count:item.userTotal ? item.userTotal : '-',
+                                })
+                                dongyuanReBuildList.push({
+                                  streetName: item.streetName ? item.streetName : '',
+                                  orgName:item.orgName ? item.orgName : '',
+                                  num:item.twoWeekOnlineHome ? item.twoWeekOnlineHome : '-',
+                                  count:item.onlineHome ? item.onlineHome : '-'
+                                })
+                              }
+                          })
+                          setAccountList(registerList,'register-table')
+                          setAccountList(orgCodeRegisterList,'orgCode-reigister-table')
+                          setAccountList(dongyuanBuildList,'dongyuan-build-table')
+                          setAccountList(dongyuanReBuildList,'dongyuan-reBuild-table')
+                          
+                        }
+                       
+                    }
+                },
+            });
+        }
+        
+      
+       function getUrlTwo(url){
+           $.ajax({
+                type : "GET",
+                url : `${proxyUrl}${url}?statDate=${startDate}&zoneCode=${zoneCode}&compareWeek=${compareWeek}`,
+                async:false,
+                beforeSend:function(xhr){
+                  xhr.setRequestHeader("Authorization", token);
+                },
+                success : function(res) {
+                   dongyuanList = []
+                   let data = res.data
+                   if(res && res.code == 200 && data){
+                      for(var k in data){
+                        if(k == 'baseData'){
+                                dongyuanList.push({
+                                    zhibiao:'基本数据',
+                                    shiji:data[k].cityOnline ? data[k].cityOnline : '-',
+                                    quji:data[k].zoneOnline ? data[k].zoneOnline : '-',
+                                    fei:data[k].noOnline ? data[k].noOnline : '-',
+                                    add:data[k].newOnline ? data[k].newOnline : '-',
+                                    account:data[k].total ? data[k].total : '-'
+                                })
+                            }
+                            else if(k == 'haveHouse'){
+                                dongyuanList.push({
+                                    zhibiao:'完成组织架构导入的社区',
+                                    shiji:data[k].cityOnline ? data[k].cityOnline : '-',
+                                    quji:data[k].zoneOnline ? data[k].zoneOnline : '-',
+                                    fei:data[k].noOnline ? data[k].noOnline : '-',
+                                    add:data[k].newOnline ? data[k].newOnline : '-',
+                                    account:data[k].total ? data[k].total : '-'
+                                })
+                            }
+                            else if(k == 'haveManyOnlinePeople'){
+                                dongyuanList.push({
+                                    zhibiao:'已启动推广的社区',
+                                    shiji:data[k].cityOnline ? data[k].cityOnline : '-',
+                                    quji:data[k].zoneOnline ? data[k].zoneOnline : '-',
+                                    fei:data[k].noOnline ? data[k].noOnline : '-',
+                                    add:data[k].newOnline ? data[k].newOnline : '-',
+                                    account:data[k].total ? data[k].total : '-'
+                                })
+                            }
+                            else if(k == 'onlinePeople'){
+                                dongyuanList.push({
+                                    zhibiao:'入驻人数',
+                                    shiji:data[k].cityOnline ? data[k].cityOnline : '-',
+                                    quji:data[k].zoneOnline ? data[k].zoneOnline : '-',
+                                    fei:data[k].noOnline ? data[k].noOnline : '-',
+                                    add:data[k].newOnline ? data[k].newOnline : '-',
+                                    account:data[k].total ? data[k].total : '-'
+                                })
+                            }
+                            else if(k == 'haveWorkGroup'){
+                                dongyuanList.push({
+                                    zhibiao:'已创建工作群的社区',
+                                    shiji:data[k].cityOnline ? data[k].cityOnline : '-',
+                                    quji:data[k].zoneOnline ? data[k].zoneOnline : '-',
+                                    fei:data[k].noOnline ? data[k].noOnline : '-',
+                                    add:data[k].newOnline ? data[k].newOnline : '-',
+                                    account:data[k].total ? data[k].total : '-'
+                                })
+                            }
+                            else if(k == 'onlineFamily'){
+                                dongyuanList.push({
+                                    zhibiao:'入驻户数',
+                                    shiji:data[k].cityOnline ? data[k].cityOnline : '-',
+                                    quji:data[k].zoneOnline ? data[k].zoneOnline : '-',
+                                    fei:data[k].noOnline ? data[k].noOnline : '-',
+                                    add:data[k].newOnline ? data[k].newOnline : '-',
+                                    account:data[k].total ? data[k].total : '-'
+                                })
+                            }
+                      }
+                   }
+                   setAccountList(dongyuanList,'dongyuan-table')
+                   
+                }
+          })
+       }
+       $(document).ready(function(){
+          getUrl('api/symanage/pc/orgManageWeekly/queryLists')
+          getUrlTwo('api/symanage/pc/orgManageOverall/queryList')
+          window.print()
+       })
+       
+
+        // // 调用平台注册用户统计表方法
+        // setAccountList(accountList,'account-table')
+        // // 调用遍历全区随约平台注册用户统计表
+        // registerFun(registerList,'register-table')
+        // // 调用遍历示范社区用户数统计表方法
+        // registerFun(orgCodeRegisterList,'orgCode-reigister-table')
+  
+        // // 调用全区社区组织动员体系建设情况一览表
+        // setAccountList(dongyuanList,'dongyuan-table')
+        //  // 示范社区组织动员体系建设情况统计
+        // registerFun(dongyuanBuildList,'dongyuan-build-table')
+        // //  非示范社区组织动员体系入驻情况统计
+        // registerFun(dongyuanReBuildList,'dongyuan-reBuild-table')
+        // //  其他情况数据
+        // setAccountList(otherList,'other-table')
+        // console.log(document.documentElement.outerHTML)
+
+        
+      </script></body></html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOMContentLoaded与load的区别</title>
+</head>
+<body>
+    <script>
+        /*
+            · 当DOMContentLoaded事件触发时，仅当DOM解析完成后，不包括样式表，图片。我们前面提到CSS加载会阻塞DOM的渲染和后面js的执行，js会阻塞DOM解析，所以我们可以得出结论：
+                当文档中没有脚本时，浏览器解析完文档会触发DOMConetntLoaded事件，如果文档中包含脚本，则脚本会阻塞文档的解析，而脚本需要等CSSOM构建完成才会执行，在任何情况下，DOMContentLoaded的触发不需要等待图片等其他资源加载完成
+
+            · 当onload事件触发时，页面上所有的DOM，样式表，脚本，图片等资源已经加载完毕
+            · DOMContentLoaded -> load
+        */ 
+    </script>
+</body>
+</html>

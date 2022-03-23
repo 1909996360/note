@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React中refs的作用是什么，有哪些应用场景</title>
+</head>
+<body>
+    <script>
+        /*
+            Refs提供了一种方式，用于访问在render方法中创建的React元素或DOM节点，Refs应该谨慎使用，如下场景使用Refs比较适合：
+                · 处理焦点、文本选择或者媒体的控制
+                · 触发必要的动画
+                · 集成第三方DOM库
+
+            Refs是使用React.createRef()方法创建的，他通过ref属性附加到React元素上，要在整个组件中使用Refs，需要将ref在构造函数中分配给其实例属性
+
+            class MyComponent extends React.Component{
+                constructor(props){
+                    super(props)
+                    this.myRef = React.createRef()
+                }
+                render(){
+                    return <div ref={this.myRef}/>
+                }
+            }
+
+            由于函数组件没有实例，因此不能在函数组件上直接使用ref:
+            
+            function MyFunctionalCompoent(){
+                return <input />
+            }
+            class Parent extends React.Component{
+                constructor(props){
+                    super(props)
+                    this.textInput = React.createRef()
+                }
+                render(){
+                    // 这将不会工作
+                    return(
+                        <MyFunctionalCompoent  ref={this.textInput}/>
+                    )
+                }
+            }
+
+            但可以通过闭合的帮助在函数组件内部使用Refs:
+            function CustomTextInput(props){
+                // 这里必须声明textInput，这样ref回调才可以引用它
+                let textInput = null
+                function handleClick(){
+                    textInput.focus()
+                }
+                return(
+                    <div>
+                        <input type="text" ref={(input) =>{textInput = input}} />    
+                        <input type="button" value="Focus the text input" onClick={handleClick}/>
+                    </div>
+                )
+            }
+
+            注意：
+                · 不应该过度的使用Refs
+                · ref的返回值取决于节点的类型
+                    ·· 当ref属性被用于一个普通的HTML元素时，React.createRef()将接受底层DOM元素作为他的current属性以创建ref
+                    ·· 当ref属性被用于一个自定义的类组件时，ref对象将接收该组件已挂载的实例作为他的current
+                · 当在父组件中需要访问子组件中的ref时可使用传递Refs或回调Refs
+                
+        */ 
+    </script>
+</body>
+</html>

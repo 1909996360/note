@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组件的通信方式</title>
+</head>
+<body>
+    <script>
+        /*
+            ·props/$emit 父子组件通信
+               1、 父->子 props，
+               2、 子->父 $on、$emit获取父子组件实例 parent、children、Ref获取实例的方法调用组件的属性或者方法 
+               3、 父->子孙 Provide、inject官方不推荐使用，但是写组件库很常用
+
+            ·$emit/$on 自定义事件 兄弟组件通信
+                Event Bus 实现跨组件通信 Vue.prototype.$bus = new Vue() 自定义事件
+
+            ·vuex跨级组件通信
+                Vuex、$attrs、$listeners Provide、inject
+        */ 
+    </script>
+</body>
+</html>

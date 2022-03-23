@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component、Element、Instance之间有什么区别和联系</title>
+</head>
+<body>
+    <script>
+        /*
+            · 元素：一个元素element是一个普通对象，描述了对于一个DOM节点或者其他组件component，你想让它在屏幕上呈现成什么样子，元素element可以在他的属性props中包含其它元素，创建一个react元素element成本很低，元素element创建之后是不可变的
+            · 组件：一个组件component可以通过多种方式声明，可以是带有一个render（）方法的类，简单点也可以定义为一个函数，这两种情况下，它都把属性props作为输入，把返回的一棵元素树作为输出
+            · 实例：一个实例instance是你在所写的组件类component class中使用关键字this所指向的东西（组件实例），它用来存储本地状态和响应生命周期事件很有用
+
+            函数式组件根本没有实例instance，类组件（class component）有实例instance，但是永远也不需要直接创建一个组件的实例，因为react帮我们做了这些
+        */ 
+    </script>
+</body>
+</html>

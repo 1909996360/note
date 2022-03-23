@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue底层实现原理</title>
+</head>
+<body>
+    <script>
+        /*
+            vue.js是采用数据劫持结合发布-订阅者模式的方式，通过Object.definedProperty()来劫持各个属性的setter和getter，在数据变动时发布消息给订阅者，触发相应的监听回调
+            Vue是一个典型的MVVM框架，模型只是普通的JavaScript对象，修改它视图会自动更新，这种设计让状态管理变得非常简单而直观
+
+            Observer（数据监听器）：Watcher订阅者作为Observer和compile之间通信的桥梁，主要做的事情是：
+                1、在自身实例化时往属性订阅器（dep）里面添加自己
+                2、自身必须有一个update（）方法
+                3、待睡醒变动dep.notice()通知时，能调用自身的update()方法，并触发compile中绑定的回调
+            
+            Watcher(订阅者)：Compile主要做的事情是解析模板指令，将模板中变量替换成数据。，然后初始化渲染页面视图，并将每个指令对应的节点绑定更新函数，添加鉴定数据的订阅者，一旦数据有变动，收到通知，更新视图
+        */
+    </script>
+</body>
+</html>

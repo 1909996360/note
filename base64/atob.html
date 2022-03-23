@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>atob，base64转码</title>
+</head>
+<body>
+    <script>
+        /*
+            atob()方法用于解码使用base64编码的字符串
+            base64编码的使用方法是btoa()
+
+            window.atob(base64)
+            
+            参数说明：
+            encodedStr:必须，是一个通过btoa()方法编码的字符串
+        */ 
+       var str = 'zhw'
+       var enc = window.btoa(str)
+       var dec = window.atob(enc)
+
+       var res = "编码字符串为: " + enc + "<br>" + "解码后字符串为: " + dec;
+    </script>
+</body>
+</html>

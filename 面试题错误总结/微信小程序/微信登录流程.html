@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信登录流程</title>
+</head>
+<body>
+    <script>
+        // 参考地址：https://juejin.cn/post/6844903588498522120
+        
+        /总结：/
+        /*
+            1、调用wx.login()API，成功之后生成一个code
+            2、获取openid和session_key,服务端调用微信第三方接口，提交appid、小程序的secret、wx.login获取的code以及grant_type四个字段，
+            3、生成加密的session_key维护登录状态，
+            4、wx.checkSession()对用户状态进行检查，判断是否过期，是的话走login之后进行业务请求，没有则直接进行业务请求
+        */  
+
+
+        /1、调用wx.login生成code/
+        /*
+            wx.login()这个API的作用就是为当前用户生成一个临时的登录凭证，这个临时凭证的有效期只有五分钟，我们拿到这个登录凭证后就可以进行下一步操作：获取openid和session_key
+        */  
+        wx.login({
+            success:function(loginRes){
+                if(loginRes.code){
+                    // expamle:081LXytJ1Xq1Y40sg3uJ1FWntJ1LXyth
+                }
+            }
+        })
+
+        /2、获取openid和session_key/
+        /*
+            我们先来介绍下openId，用过公众号的应该对这个表示都不陌生，在公众平台里，用来标识每个用户在订阅号、服务号、小程序这三种不同应用的唯一标识，也就是说每个用户在每个应用的openId都是不一致的，所以在小程序里，我们可以用openId来表示用户的唯一性
+
+            那么session_key是用来干嘛的？有了用户表示，我们就需要让该用户进行登录，那么session_key就保证了当前用户进行会话操作的有效性，这个session_key是微信服务端给我们派发的，也就是说，我们可以用这个标识来间接地维护我们小程序用户地登录态，那么这个session_key是怎么拿到地，我们需要在服务端请求微信提供的第三方接口
+
+            https://api.weixin.qq.com/sns/jscode2session
+
+            这个接口需要带上四个参数字段：
+            appid ： 小程序的appid
+            secret : 小程序的secret
+            js_code : 前面调用wx.login派发的code
+            grant_type : 'authorization_code'
+
+            从这几个参数，我们可以看出，要请求这个接口必须先调用wx.login()来获取用户当前会话的code，那么为什么我们要在服务端请求这个接口呢？其实是出于安全性考虑，如果我们在前端通过request调用此接口，就不可避免地需要将我们小程序的appid和小程序的secret暴露在外部，给业务安全有极大的风险
+        */  
+
+        /*
+            · session_key和微信派发的code是一一对应的，同一code只能换取一次session_key。每次调用wx.login(),都会下发一个新的code和对应的session_key，为了保证用户体验和登录态的有效性，开发者需要清楚用户需要重新登录时才会去调用wx.login()
+            · session_key时有效性的，即便是不调用wx.login， session_key也会过期，过期时间跟用户使用小程序的频率成正相关，但具体的时间长短开发者和用户都是获取不到的
+        
+        */ 
+
+        function getSessionKey (code, appid, appSecret) {
+            var opt = {
+                method: 'GET',
+                url: 'https://api.weixin.qq.com/sns/jscode2session',
+                params: {
+                    appid: appid,
+                    secret: appSecret,
+                    js_code: code,
+                    grant_type: 'authorization_code'
+                }
+            };
+            return http(opt).then(function (response) {
+                var data = response.data;
+                if (!data.openid || !data.session_key || data.errcode) {
+                    return {
+                        result: -2,
+                        errmsg: data.errmsg || '返回数据字段不完整'
+                    }
+                } else {
+                    return data
+                }
+            });
+        }
+
+        /3、生成3rd_session/
+        /*
+            前面说过通过session_key来间接地维护登录态，所谓间接，也就是我们需要自己维护用户地登录态信息，这里也是考虑到安全性因素，如果直接使用微信服务端派发地session_key来作为也业务方的登录态使用，会被有心人用来获取用户的敏感信息，比如wx.getUserInfo()这个接口，就需要session_key来配合解密微信用户的敏感信息
+        */  
+
+        const crypto = require('crypto');
+
+            return getSessionKey(code, appid, secret)
+                .then(resData => {
+                    // 选择加密算法生成自己的登录态标识
+                    const { session_key } = resData;
+                    const skey = encryptSha1(session_key);
+                });
+                
+            function encryptSha1(data) {
+                return crypto.createHash('sha1').update(data, 'utf8').digest('hex')
+        }
+
+        /4、checkSession/
+        /*
+            前面我们将skey存入前端的storage里，每次进行用户数据请求时会带上skey，那么如果此时session_key过期呢，所以我们需要调用wx.checkSession()这个API来检验当前session_key是否已经过期，这个API并不需要传入任何有关session_key的信息参数，而是微信小程序自己去调自己的服务来查询用户最近一次生成的session_key是否过期，如果当前session_key过期，就让用户来重新登录，更新session_key，并且最新的skey存入数据用户表
+        */  
+
+
+        /unionid/
+        /*
+            如果开发者拥有多个移动应用、网站应用、和公众账号（包括小程序），可通过unionid来区分用户的唯一性，因为只要是同一个微信开发平台账号下的移动应用、网站应用和公众账号（包括小程序），用户的unionid是唯一。换句话说，同一用户，对同一个微信开发平台下的不同应用，unionid是相同的
+
+            如果开发者在多个移动应用、网站应用和公众账号之间有统一用户账号的需求，需要前往微信开发平台(open.weixin.qq.com)绑定公众号后，便可利用UnionID机制来满足上述需求
+
+            · 一个微信开发平台账号下可以有多个移动应用，网站应用，公众账号和小程序
+            · 只要是同一个微信开发平台账号下的移动应用、网站应用和公众账号（包括小程序），用户的unionid是唯一的
+        */  
+
+
+    </script>
+</body>
+</html>

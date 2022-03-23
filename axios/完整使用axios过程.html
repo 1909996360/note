@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>完整使用axios过程</title>
+</head>
+<body>
+    <script>
+        // 参考地址:https://juejin.cn/post/7034827130701611016
+        /axios请求方法/
+        
+        /*
+            主要有get、post、put、patch、delete
+            1、get
+                获取数据
+            2、post
+                提交数据
+            3、put
+                更新数据（将所有数据均推送到服务端）
+            4、patch
+                更新数据（只将修改的数据推送到后端）
+            5、delete
+                删除数据
+            
+           
+        */ 
+            /get方法/  
+            // 写法：
+            // 调用型
+            axios.get('/data.json').then((res)=>{
+                console.log(res)
+            })
+            // axios型
+            axios({
+                methods:'get',
+                url:'/data.json'
+            }).then((res)=>{
+                console.log(res);
+            })
+
+            /params/ 
+            // 调用型
+            axios.get('/data.json',{
+                params:{
+                    id:12
+                }
+            }).then((res)=>{
+                console.log(res);
+            })
+            // axios()方法型
+            axios({
+                methods:'get',
+                url:'/data.json',
+                params:{
+                    id:12
+                }
+            }).then((res)=>{
+                console.log(res);
+            })
+
+            /post方法/
+            // 写法
+            // 调用型
+            axios.post('/post',{},config)
+            // post方法有三个参数，分别是url、数据、config
+            /*
+                一般上传的数据分两种
+                1、form-data表单提交（图片上传、文件上传）
+                2、application/json
+                3、以上两种数据，都可以在请求发起后，进入浏览器network查看请求头中的content-type进行查看
+            */  
+            /*
+                假设我们现在要上传一个数据
+                let data = {id:22}
+                那么我们可以直接将其传入
+            */ 
+                axios.post('/post',data).then((res)=>{
+                    console.log(res)
+                })
+            
+            // axios()方法型
+                axios({
+                    method:'post',
+                    url:'/post',
+                    data:data
+                }).then()
+
+            /*
+                两种数据的小细节
+                1、当我们上传的是一个一般的let data = {id:12}数据时，Network的请求头里会显示为：application/jsoin;chartset=UTF-8
+                2、当我们上传的是：
+                    let data = {id:12}
+                    let formData = new FormData()
+                    for(let key in data){
+                        formData.append(key,data[key])
+                    }
+                这里将data转格式了，格式变为formdata形式，
+                那么netWork的请求头里会显示为：multipart/form-data; boundary=----WebKitFormBoundarywWFnSlPye1ZF8CSw
+            */ 
+            
+            /push方法和patch方法/
+            /*
+                    形式与post方法大体相同，network显示仅Request Method不同
+            */  
+
+            /delete方法/
+            //写法
+            // url删除法
+            axios.delete('/data.json',{
+                params:{
+                    id:12
+                }
+            }).then((res)=>{
+                console.log(res);
+            }) 
+            // 从url删除,network请求头最后会显示为:Query String Parameters
+            // 请求体删除法
+            axios.delete('/data.json',{
+                data:{
+                    id:12
+                }
+            }).then((res)=>{
+                console.log(res);
+            })
+            // 从请求体里删除,network请求头最后会显示为Request Payload
+            // 两种方法的删除方式是不同的,具体使用需要和后端沟通
+
+            /并发请求/
+            
+            /*
+                简介:
+                    同时进行多个请求,并统一处理返回值
+                案例:
+                    假设有一个聊天工具,通过是有你的聊天记录和个人信息,此时需要调用两个接口去请求数据,此时,需要统一处理他们的返回值
+            */ 
+            /axios提供的方法:all,spread/
+            /*
+                axios.all方法接受一个数组作为参数,数组中的每个元素都是一个请求,返回一个promise对象,当数组中所有请求均已完成时,执行then方法.在then方法将中执行了axios.spread方法.该方法是接收一个函数作为参数,返回一个新的函数,接受的参数函数的参数是axios.all方法中每个请求返回的响应
+            */  
+           function getUserAccount(){
+               return axios.get('/user/12345')
+           }
+           function getUserPermissions(){
+               return axios.get('/user/12345/permissions')
+           }
+           axios.all([getUserAccount(),getUserPermissions()]).then(axios.spread((acct,perms)=>{
+                // 两个请求都完成后,acct是getUserAccoount的返回值,同理,perms是getUserPermissions的返回值
+           })
+
+          /axios实例简介/
+          // 为什么要用实例
+          // 当我们需要用到不同的接口域名,直接调用axios.get并不太方便,我们可以用创建实例的方式去调用,不同的域名用不同的实例一一对应
+          // 表现形式
+          created(){
+              let instance = axios.create({
+                  baseURL:'http://localhost:8080', // 基本请求路径
+                  timeout:1000, //超市设定
+              })
+              instance.get('/data.json').then(res=>{
+                  console.log(res);
+              })
+          }
+
+         //基本配置方法
+         baseURL :'http://localhost:8080', // 请求的域名,基本地址
+         timeout:1000, // 请求超时时长
+         url:'/data.json', // 请求路径
+         method:'get,post,put,patch,delete', //请求方法
+         headers:{
+             token:'' // 代表当前登陆人的身份信息
+         },
+         params:{}, // 将请求参数拼接在url上,是一个对象
+         data:{} // 将请求参数放在请求体里,是一个对象
+         
+        //  其中,params和data表现形式为对象
+        // 使用场景通常是发起请求时,顺带传送参数
+
+        // 以get请求为例,get有两个配置,分别是相对路径和config
+        axios.get('/data.json',{
+            params:{
+                // 参数
+            }
+        })
+
+        /参数配置方法/
+        // 1.全局配置
+        axios.default. //基本配置方法(baseurl等)
+        // 如:
+        axios.default.timeout = 1000 // 全局配置请求时长1s
+        
+        // 2.实力配置
+        let instance = axios.create{
+            // 基本配置方法
+        }
+        // 如果设置了全局的配置方法,而实力配置中没有设置响应的方法,则延用全局的方法,否则,以实例中的方法为主
+
+        // 3.axios请求配置
+        // 视具体情况而定,如调用某个路径的文件巨大,我们可以单独对其请求时长进行设置:
+        instance.get('/data.json',{
+            timeout:500
+        })
+
+        // 总结: 优先级: 请求配置 > 实例配置 > 全局配置
+        
+        /拦截器/
+        // 在发起请求前做一些处理,再发起请求后在做一些处理
+        // 分为请求拦截器和相应拦截器
+        
+        /请求拦截器/
+        axios.interceptors.request.use{
+            config =>{
+                // 在发送请求前做些什么
+                return config
+            },
+            err =>{
+                // 在请求错误的时候做些什么(此处错误,请求没有到后端)
+                return Promise.reject(err) //这里返回一个promise对象
+            }
+        }   
+        /响应拦截器/
+        axios.interceptors.responce.use(
+            res =>{
+                // 请求成功对响应数据进行处理
+                return res
+            },
+            err =>{
+                // 响应错误做些什么(此处错误,到达后端后返回)
+                return Promise.reject(err)
+            }
+        ) 
+        // 两者都在响应错误后进行了promise对象的返回,具体的作用是什么呢
+        axios.get().thne().catch(err=>{})
+        // 这一段代码是我们平常发送get请求时的标准形态,then会执行请求成功后的操作,catch用来捕获错误.我们前面拦截响应后,无论是请求还是响应的拦截器,他们的err返回的promise都会进入catch中
+
+        /取消拦截器/
+        let inerceptors = axios.interceptors.request.use
+        (config =>{
+            config.header = {
+                auth:true
+            }
+            return config
+        }) 
+        axios.inerceptors.request.eject(interceptors) //用axios全局去调用interceptors,这样就取消拦截了
+
+        // 举个例子
+        // 通过拦截器控制登录状态
+        let request = axios.create({})
+        request.interceptors.request.use(
+            config=>{
+                config.headers.token = ''
+                return config
+            }
+        )
+        // 非登录状态,无token
+        let request = axios.create({})
+        // 有token的可以访问更多,get更多的数据,无token则不行,类似于评论需要登录
+
+        /错误处理/
+        // 表现形式
+        // 首先设置拦截器
+        axios.interceptors.request.use(
+            config =>{
+                return config
+            },
+            err =>{
+                return Promise.reject(err)
+            }
+        ) 
+        axios.interceptors.resopnse.use(
+            res =>{
+                return res
+            },
+            err =>{
+                return Promise.reject(err)
+            }
+        )
+
+        // 错误的获取
+        axios.get('/data.json').then(res=>{
+            console.log(res);
+        }).catch(err =>{
+            console.log(err); //所有错误处理都会进入此处
+        })
+
+        // 具体的实践过程中,我们需要创建一个统一的错误处理,将所有的错误类型都放在拦截其中,方便我们后面调用接口时使用
+
+        // 例子
+        // 创建一个请求实例
+        let instance = axios.create({})
+        // 为请求实例添加请求拦截器
+        instance.interceptors.request.use(
+            config =>{
+                return config
+            },
+            err =>{
+                // 请求错误,一般http状态码以4开头,常见:401超时,404Not found 多为前端浏览器错误
+                return Promise.reject(err)
+            }
+        )
+        instance.interceptors.resopnse.use(
+            res =>{
+                return res
+            },err =>{
+                // 响应错误,一般http状态码以5开头,500系统错误,502系统重启等,偏向于服务端返回的报错
+                return Promise.reject(err)
+            }
+        )
+        // 使用
+        instance.get('data').then(res=>{
+            console.log(res);
+        }).catch(err =>{
+            console.log(err);
+        })
+
+        /取消请求/
+        // 用于取消正在进行的http请求
+    </script>
+</body>
+</html>

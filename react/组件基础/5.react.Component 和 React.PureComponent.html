@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React.Component 和 React.PureComponent的区别</title>
+</head>
+<body>
+    <script>
+        /*
+            PureComponent表示一个纯组件，可以用来优化React程序，减少render函数执行的次数，从而提高组件的性能
+
+            在React中，当prop或者state发生变化时，可以通过在shouldComponentUpdate生命周期函数中，执行return false来阻止页面的更新，从而减少不必要的render执行，React.PureCompoent会自动执行shouldComponentUpdate
+
+            不过pureComponent中的shouldComponentUpdate()进行的是浅比较，也就是说如果是引用数据类型的数据，只会比较不是同一个地址，而不会比较这个地址里面的数据是否一致，浅比较会忽略属性和或状态突变情况，其实也就是数据引用指针没有变化，而数据发生改变的时候render是不会执行的，如果需要重新渲染那么就需要重新开辟空间引用数据。PureComponent一般会用在一些纯展示组件上，
+            使用pureCompoent的好处：当组件更新时，如果组件的props或者state都没有改变，render函数就不会触发，省去虚拟DOM的生成和对比过程，达到性能提升的目的，这是因为react自动做了一层浅比较
+        */ 
+    </script>
+</body>
+</html>

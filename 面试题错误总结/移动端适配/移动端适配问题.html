@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>移动端适配问题</title>
+</head>
+<body>
+    <script>
+        // 参考地址：https://juejin.cn/post/6844903631993454600
+        /总结/
+        /*
+            1、rem适配
+            2、vw、vh布局
+            3、px为主，vx和vxxx（vw、vh、vmax、vmin）为辅，搭配一些flex（推荐）
+        
+        */  
+        /viewport/
+        /*
+            视口(viewport)代表当前可见的计算机图形区域，在web浏览器术语中，通常与浏览器窗口相同，但不包括浏览器的UI，菜单栏等 ---- 即指你正在浏览的文档的那一部分，简单的一个meta标签即可
+        */  
+
+        // <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1; minimum-scale=1; user-scalable=no;">
+
+        /*
+            分别代表的含义：
+                width :        定义视口的宽度，单位为像素    正整数或设备宽度device-width
+                height:        定义视口的高度，单位为像素    正整数或device-height
+                inital-scale : 定义初始缩放值               整数或小数
+                minimum-scale: 定义缩放最小比例，           整数或小数
+                               他必须小于或等于
+                               maximun-scale设备
+                maximum-scale: 定义放大最大比例，           整数或小数
+                               它必须大于或等于
+                               minimum-scale设置   
+                user-scalable：定义是否允许用户手动         yes/no
+                               缩放页面，默认值是yes
+        */ 
+
+        /*
+            我们在移动端视口要想视觉效果和体验好，那么我们的视口宽度必须无限接近理想视口
+
+            理想视口：一般来讲，这个视口其实不是真实存在，他对设备来说是一个最理想布局视口尺寸，在用户不进行手动缩放的情况下，可以将页面理想地展示，那么所谓的理想宽度就是浏览器（屏幕）的宽度了
+
+            于是上述的meta设置，就是我们的理想设置，它规定了我们的视口宽度为屏幕宽度，初始缩放比例为1，就是初始时候我们的视觉视口就是理想视口
+
+            其中user-scalable设置为no，可以解决移动端点击事件延迟问题
+        */ 
+
+        /解决适配方法/
+        /1、rem适配/
+        /*
+            rem是css3新增的一个相对单位，这个单位引起了广泛关注，这个单位与em有什么区别呢？区别在于使用rem为元素设定字体大小时，仍然是相对大小，但相对的只是HTML根元素。这个单位可谓集相对大小和绝对大小的优点于一身，通过它既可以做到只修改根元素就成比例地调整所有字体大小，又可以避免字体大小逐层复合地连锁反应。
+        */   
+        /*
+            举个例子：
+            //假设我给根元素的大小设置为14px
+            html{
+                font-size：14px
+            }
+            //那么我底下的p标签如果想要也是14像素
+            p{
+                font-size:1rem
+            }
+            //如此即可
+        */    
+        /*
+            rem是相对于html节点地font-size来做计算的，所以在页面初始化的时候给根元素设置一个font-size，接下来的元素就根据rem来布局，这样就可以保证在页面大小来变化时，布局可以自适应，
+
+            当然，这个只是过度方案，因为当年viewport在低版本安卓设备上还有兼容问题，而vw，vh还没能实现所有浏览器兼容，所以flexible方案用rem来模拟vmin来实现不同设备等比缩放的“通用”方案，之所以说是通用方案，是因为他这个方案是根据设备大小去判断页面的展示空间大小即屏幕大小，然后根据屏幕大小去百分百还原设计稿，从而让人看到的效果（展示范围）是一样的，这样一来，i5和i6p还原稿，字体大小实际上不一样。
+        */    
+        
+        /2、vw、vh布局/
+        /*
+            vh、vw方案即 将视口宽度window.innerWidth和视觉视口宽度window.innerHeight等分为100份
+
+            vh和vw方案和rem类似也是相当麻烦需要做单位转化，而且px转换为vw不一定能够完全整除，因此有一定的像素差
+
+            不过在工程化的今天，webpack系欸css的时候用postcss-loader 有个 postcss-px-to-viewport能自动实现px到vw的转化
+
+            {
+                loader: 'postcss-loader',
+                options: {
+                    plugins: ()=>[
+                        require('autoprefixer')({
+                            browsers: ['last 5 versions']
+                        }),
+                        require('postcss-px-to-viewport')({
+                            viewportWidth: 375, //视口宽度（数字)
+                            viewportHeight: 1334, //视口高度（数字）
+                            unitPrecision: 3, //设置的保留小数位数（数字）
+                            viewportUnit: 'vw', //设置要转换的单位（字符串）
+                            selectorBlackList: ['.ignore', '.hairlines'], //不需要进行转换的类名（数组）
+                            minPixelValue: 1, //设置要替换的最小像素值（数字）
+                            mediaQuery: false //允许在媒体查询中转换px（true/false）
+                        })
+                    ]
+            }
+
+
+        */  
+
+        /3、px为主，vx和vxxx（vw、vh、vmax、vmin）为辅，搭配一些flex（推荐）/ 
+        /*
+            1、在head设置width = device-width 的viewport
+            2、在css中使用px
+            3、在适当的场景使用flex布局，或者配合vw进行自适应
+            4、在跨设备类型的时候(pc-手机-平板)使用媒介查询
+            5、在跨设备类型如果交互差异太大的情况，考虑分开项目开发
+        */ 
+
+    </script>
+</body>
+</html>

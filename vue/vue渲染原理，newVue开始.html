@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue实例开始之后</title>
+</head>
+<body>
+    <script>
+
+        // 参考：https://blog.csdn.net/qq_41694291/article/details/108435096?utm_medium=distribute.pc_feed.none-task-blog-personrec_tag-2.nonecase&depth_1-utm_source=distribute.pc_feed.none-task-blog-personrec_tag-2.nonecase&request_id=5f5881b85361b606e51015a1
+        /*
+            - 1、创建vue实例
+                -- 2、执行vue实例初始化
+                    --- 3、开始执行 vm.init，进行实例初始化
+                        ---- 4、初始化vm.$options
+
+                        ---- 5、初始化proxy
+                                如果浏览器支持proxy，则代理它的render函数
+
+                        ---- 6、initLiefecycle,初始化实例生命周期
+                            ----- 7、执行initLiefecycle
+                                     添加$parent和$post，同时将其添加到父元素的$children上
+                                     添加属性：$children、$refs、_watcher、inactive,_directInactive,_isMounted,_isDestoryed,_isBeginDestoryed，初始化为空
+
+                        ---- 8、initEvents,初始化实例事件方法
+                            ----- 9、执行initEvents
+                                     添加属性：_event，_hasHookEvent,初始值为空
+                                     初始化父组件对当前组件的事件监听
+
+                        ---- 10、initRender，初始化实例渲染方法
+                            ----- 11、执行initRender
+                                      初始化_vnode和_staticTrees
+                                      调用resolveSlots，初始化并解析$slots
+                                      初始化_c,他是兼容各个平台的createElement方法的别名，用于render函数中创建DOM
+                                      初始化$attrs和$listeners
+                        
+                        --------------------生命周期钩子：beforeCreate------------------------------
+
+                        ---- 12、initInjections，初始化实例注入
+                            ----- 13、开始执行initInjections
+                                      调用resolveInject，解析上级组件的注入
+
+                        ---- 14、initState，初始化实例状态
+                            ----- 15、执行initState
+                                      初始化_watchers
+                                ------ 16、执行initProps，初始化props
+                                ------ 17、执行initMethods，初始化methods
+                                ------ 18、执行initData,初始化data
+                                    ------- 19、调用Observe，将data转化为响应式
+                                        -------- 20、开始执行observe
+                                                     通过new Observer,向目标对象添加__ob__属性，它是Observer实例，该实例的_dep属性负责收集依赖，_dep的_watchers数组负责保存订阅者
+                                    ------- 21、执行initComputed,初始化computed
+                                    ------- 22、执行initWatch，初始化watch
+                                        -------- 23、初始化watch，为每个watch创建一个watcher，添加到目标属性的_watchers列表中
+
+                                ------ 24、initProvide，初始化实例依赖
+
+                        ---------------------生命周期钩子,created--------------------------------------
+
+
+            整个过程的关键点：
+                1、     初始化$options,这一步就是把组件配置options直接保存为实例的$options属性，以供后面的各种初始化使用
+                2、     调用initProxy方法初始化proxy代理。如果浏览器支持proxy，Vue会为当前实例生成一个代理对象，以他作为render函数的调用者，以提高性能，如果不支持，则该代理就是当前实例本身
+                3、     调用initLifecycle初始化组件生命周期，这里主要是初始化一些与生命周期相关的实例属性，如$children、_watcher、_isMounted等。他们暂时只是空值，会在进入特定的生命周期时被赋予特定的值
+                4、     调用initEvents初始化组件事件属性，主要是定义_events属性，该属性后面将用于存储与当前组件有关的事件监听，目前它的值是空的，挂载阶段才会为其赋值
+                5、     调用initRender初始化与渲染相关的实例属性和方法，包括初始化_vnode、$slots、_c、$attrs、$listeners等，_vnode将在挂载阶段保存当前组件对应的虚拟节点，$slots用于保存插槽内容，_c是渲染真实DOM的方法（配置render:h=>h(App)的函数h值得正是_c）, 在浏览器环境下，它主要基于document.createElement实现，$attrs和$listeners用于保存来自父组件的属性和监听函数注入
+                6、     执行到这里，与组件状态无关的配置都已经初始化完毕，beforeCreate生命周期钩子函数被调用
+                7、     调用initInjections初始化注入，它要解析的是依赖注入环境下当前组件从外部注入的变了，关于依赖注入模式，
+                8、     调用initState初始化组件状态。这里分别又调用了initProps、initMethods、initData、initComputed和initWatch来初始化配置中的props、methods、data、computed和watch。他们都是与组件的业务逻辑息息相关的配置，执行完毕后，它们都以实例属性或方法的形式直接添加到组件上。比如，当执行完initData后，你就可以直接用this.message来访问data中的message变量了，其他配置同理。值得一提的是，这一步骤的主要作用是构建响应式系统，比如initData不仅仅是将变量添加到组件上，而且为其生成了一个Observer观察者对象，这样vue就可以对该变量的变化进行观测，关于响应式系统的实现，
+                9、     调用initProvide初始化provide，这是依赖注入模式的provide部分，与injections是对应的
+                10、    现在组件实例已经初始化完毕，执行create生命周期钩子函数
+                
+        */ 
+    </script>
+</body>
+</html>

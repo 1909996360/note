@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信支付流程</title>
+</head>
+<body>
+    <script>
+        /进行微信支付，在小程序端我们主要做三件事/
+        /1、使用wx.login获取临时登录凭证code，发送到后端获取openId/
+        wx.login({
+            success(res){
+                if(res.code){
+                    // 发起请求，换取openId
+                    wx.request({
+                        url:'',
+                        data:{
+                            code:res.code
+                        }
+                    })
+                }
+            }
+        })  
+
+        /2、将openId以及相应需要的商品信息发送到后端，换取服务端进行的签名等信息/
+        
+        wx.request({
+            url: '',
+            data: {
+                openId: '',
+                num: 1,
+                id: '111'
+            }
+        })
+
+        /3、接收返回的信息（必须要包含发起微信支付，wx.requestPayment的参数），发起微信支付/ 
+        wx.requestPayment({
+            // 时间戳
+            timeStamp: '',
+            // 随机字符串
+            nonceStr: '',
+            // 统一下单接口返回的 prepay_id 参数值
+            package: '',
+            // 签名类型
+            signType: '',
+            // 签名
+            paySign: '',
+            // 调用成功回调
+            success () {},
+            // 失败回调
+            fail () {},
+            // 接口调用结束回调
+            complete () {}
+        })
+
+
+    </script>
+</body>
+</html>

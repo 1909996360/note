@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>file、blob、base64转换规则</title>
+</head>
+<style>
+    div{
+        width: 500px;
+        height: 700px;
+    }
+    img{
+        width: 100%;
+        height: 100%;
+    }
+</style>
+<body>
+    <div>
+        <img src="" alt="" id="image"/>
+    </div>
+    <script>
+        /*
+            将file转blob
+        */ 
+        function fileChangeBlob(file){
+            return new Promise((resolve,reject)=>{
+                let reader = new FileReader()
+                let rs = reader.readAsArrayBuffer(file)
+                let blob = null
+                reader.onload = (e) =>{
+                    if(typeof e.target.result === 'object'){
+                        blob = new Blob([e.target.result],{type:'image/jpeg'})
+                    }else{
+                        blob = e.target.result
+                    }
+                    resolve(blob)
+                }
+                reader.onerror = (e) =>{
+                    reject(e)
+                }
+            })
+            
+        }
+
+        /*
+            将blob转为base64
+        */ 
+       function blobToDataURL(blob){
+           return new Promise((resolve,reject) =>{
+                var reader = new FileReader()
+                reader.readAsDataURL(blob)
+                reader.onload = function(e){
+                    resolve(e.target.result)
+                }
+                reader.onerror = function(e){
+                    reject(e)
+                }
+           }) 
+       }
+
+       /*
+            将base64转file
+       */
+       function dataURLtoFile(dataurl,filename){
+           var arr = dataurl.split(',')
+           var bstr = atob(arr[1])
+           var n = bstr.length
+           var u8arr = new Uint8Array(n)
+           while(n--){
+               u8arr[n] = bstr.charCodeAt(n)
+           }
+           return new File([u8arr],filename,{type:'image/jpg'})
+       }
+
+    /*
+       url转base64
+    */    
+       function urlToBase64(url){
+            return new Promise((resolve,reject) =>{
+                let image = new Image()
+                image.onload = function(){
+                    let canvas = document.createElement('canvas')
+                    canvas.width = this.naturalWidth
+                    canvas.height = this.naturalHeight
+                    // 将图片插入画布并开始绘制
+                    canvas.getContext('2d').drawImage(image,0,0)
+                    // result
+                    let result = canvas.toDataURL('image/png')
+                    resolve(result)
+                }
+                // CORS策略，会存在跨域问题
+                image.setAttribute('crossOrigin','Anonymous')
+                image.setAttribute('crossOrigin', 'anonymous'); // 解决跨域
+                image.crossOrigin = '*';
+                image.src = url + '?v=' + Math.random();  // 解决图片URL缓存问题
+                // 图片加载失败的错误处理
+                image.onerror = () =>{
+                    reject(new Error('url转换base64失败'))
+                }
+            })
+       }
+
+    // src = 'https://liefeng.oss-cn-shenzhen.aliyuncs.com/TEST/zjsm/20220118/1642483968.jpg'
+    var src = 'https://liefeng.oss-cn-shenzhen.aliyuncs.com/TEST/zjsm/20220118/1642483968.jpg'
+    var imageId = document.getElementById('image')
+    var file,base64,blob
+
+    async function run(){
+        imageId.src = await urlToBase64(src)
+        file = dataURLtoFile(imageId.src,'base64转blob')
+        base64 = await blobToDataURL(file)
+        blob = await fileChangeBlob(file)
+        console.log(blob);
+        console.log(file);
+    }
+    run()
+    </script>
+</body>
+</html>

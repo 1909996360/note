@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在React中组件的props改变时更新组件的有哪些方法</title>
+</head>
+<body>
+    <script>
+        /*
+            在一个组件传入的props更新时重新渲染该组件常用的方法是在componentWillReceiveProps中将新的props更新到组件的state中，（这种state被称为派生状态），从而实现重新渲染，React16.3还引入了一个新的钩子函数getDerivedStateFromProps来专门实现这一需求
+
+            （1）componentWillReceiveProps(已废弃)
+                在react的componentWillReceiveProps(nextProps)生命周期中，可以在子组件的render函数执行前，通过this.props获取旧的属性，通过nextProps获取新的props，对比两次props是否相同，从而更新子组件自己的state
+
+                这样的好处是，可以将数据请求放在这里进行执行，需要传的参数则从componentWillReceiveProps(nextProps)中获取，而不必将所有的请求都放在父组件中，于是该请求只会在该组件渲染时才会发出，从而减轻请求负担
+
+            （2）getDerivedStateFromProps（16.3引入）
+                    这个生命周期函数是为替代componentWillReceiveProps存在的，所以在需要使用componentWillReceiveProps时，就可以考虑使用getDerivedStateFromProps来进行替代。
+                    两者的参数是不相同的，而getDerivedStateFromProps是一个静态函数，也就是这个函数不能通过this访问到class的属性，也并不推荐直接访问属性，而是应该通过参数提供的nextProps以及prevState来进行判断，根据新传入的props来映射到state
+                    需要注意的是，如果props传入的内容不需要影响到你的state，那么就需要返回一个null，这个返回值是必须的，所以尽量将其写道函数的末尾：
+
+                static getDerivedStateFromProps(nextProps, prevState) {
+                    const {type} = nextProps;
+                    // 当传入的type发生变化的时候，更新state
+                    if (type !== prevState.type) {
+                        return {
+                            type,
+                        };
+                    }
+                    // 否则，对于state不进行任何操作
+                    return null;
+                }
+
+        */ 
+    </script>
+</body>
+</html>

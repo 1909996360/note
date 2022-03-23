@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            每个Vue实例在创建时都会经过一系列的初始化过程，vue的生命周期钩子，就是说在达到某一阶段或条件时去触发的函数，目的就是为了完成一些动作或者事件
+                beforeCreate（创建前）:此时date和methods中的数据都还没有初始化
+                created(创建完毕)：data中有值，未挂载
+                beforeMount(挂载前):可以发起服务端请求，去数据
+                mounted(挂载后)：此时可以操作DOM
+                beforeUpdate(更新前)：更新前
+                updated（更新后）
+                beforeDestory(销毁前):实例被销毁前，此时可以手动销毁一些方法
+                destroyed(销毁后)
+
+            组件生命周期（父子组件）
+                父beforeCreate -> 父created -> 父beforeMount -> 子beforeCreated -> 子created -> 子beforeMount -> 子mounted -> 父mounted -> 父beforeUpdate -> 子beforeDestory -> 子destoryed -> 父updated
+
+                加载渲染过程：
+                    父beforeCreate -> 父created -> 父beforeMount -> 子beforeCreate -> 子created -> 子beforeMount -> 子mounted -> 父mounted
+                
+                挂载阶段：
+                    父created -> 子created -> 子mounted -> 父mounted
+
+                父组件更新阶段
+                    父beforeUpdate -> 父updated
+
+                子组件更新阶段
+                    父beforeUpdate -> 子beforeUpdate -> 子updated -> 父updated
+
+                销毁阶段
+                    父beforeDestory -> 子beforeDestroy -> 子destroyed -> 父destroyed
+                
+            
+        */
+    </script>
+</body>
+</html>

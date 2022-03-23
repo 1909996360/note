@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React性能优化在哪个生命周期，他优化的原理是什么</title>
+</head>
+<body>
+    <script>
+        /*
+            react的父级组件的render函数重新渲染会引起子组件的render方法的重新渲染，但是，有的时候子组件的接受父组件的数据没有变动，子组件render的执行会影响性能，这时就可以使用shouldComponentUpdate来解决这个问题
+
+            使用方法如下：
+            shouldComponentUpdate(nexrProps) {
+                if (this.props.num === nexrProps.num) {
+                    return false
+                }
+                return true;
+            }
+            
+            shouldComponentUpdate提供了两个参数nextProps和nextState，表示下一次props和一次state的值，当函数返回false时候，render()方法不执行，组件也就不会渲染，返回true时，组件照常重渲染，此方法就是拿当前props中值和下次props中的值进行对比，数据相等时，返回false，反之返回true
+
+            需要注意，在进行新旧对比的时候，是浅比对，也就是说如果比较的数据时引用数据类型，只要数据的引用的地址没变，即使内容变了，也会被判定为true
+
+            面对这个问题，可以使用如下方法进行解决：
+            （1）使用setState改变数据之前，先采用ES6中assgin进行拷贝，但是assgin只深拷贝的数据的第一层，所以说不是最完美的解决方法：
+
+            const o2 = Object.assign({},this.state.obj)
+            o2.student.count = '00000';
+            this.setState({
+                obj: o2,
+            })
+
+            （2）使用JSON.parse(JSON.stringfy())进行深拷贝，但是遇到数据为undefined和函数时就会错
+            const o2 = JSON.parse(JSON.stringify(this.state.obj))
+            o2.student.count = '00000';
+            this.setState({
+                obj: o2,
+            })
+
+
+        */ 
+    </script>
+</body>
+</html>

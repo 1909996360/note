@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>函数柯里化</title>
+</head>
+<body>
+    <script>
+        // 参考地址：https://juejin.cn/post/6844903882208837645
+        /什么是柯里化/
+        /*
+            在数学和计算机科学中，柯里化是一个将使用多个参数的一个函数转换成一系列使用一个参数的函数的技术
+
+            举例来说，一个接受三个参数的普通函数，在进行柯里化后，柯里化版本的函数接收一个参数并返回接收下一个参数的函数，该函数返回一个接收第三个参数的函数，最后一个函数在接收第三个参数后，将之前接收到的三个参数应用于原普通函数中，并返回最终结果
+            
+        */  
+       // 数学和计算科学中的柯里化：
+
+        //一个接收三个参数的普通函数
+        function sum(a,b,c) {
+            console.log(a+b+c)
+        }
+
+        //用于将普通函数转化为柯里化版本的工具函数
+        function curry(fn) {
+        //...内部实现省略，返回一个新函数
+        }
+
+        //获取一个柯里化后的函数
+        let _sum = curry(sum);
+
+        //返回一个接收第二个参数的函数
+        let A = _sum(1);
+        //返回一个接收第三个参数的函数
+        let B = A(2);
+        //接收到最后一个参数，将之前所有的参数应用到原函数中，并运行
+        B(3)    // print : 6
+
+
+        /*
+            而对于js语言来说，我们通常说的柯里化函数的概念，与数学和计算机科学中的柯里化的概念并不一样
+
+            在数学和计算机科学中的柯里化函数，一次只能传递一个参数
+
+            而我们js实际应用中的柯里化函数，可以传递一个或多个参数
+
+        */ 
+
+        //普通函数
+        function fn(a,b,c,d,e) {
+            console.log(a,b,c,d,e)
+        }
+        //生成的柯里化函数
+        let _fn = curry(fn);
+
+        _fn(1,2,3,4,5);     // print: 1,2,3,4,5
+        _fn(1)(2)(3,4,5);   // print: 1,2,3,4,5
+        _fn(1,2)(3,4)(5);   // print: 1,2,3,4,5
+        _fn(1)(2)(3)(4)(5); // print: 1,2,3,4,5
+
+        /*
+            对于已经柯里化后的_fn函数来说，当接收的参数数量与原函数的形参数量相同时，执行原函数；当接收的参数数量小于原函数的形参数量时，返回一个函数用于接收剩余的参数，直至接收的参数数量与形参数量一致，执行原函数
+        */ 
+
+
+        /柯里化的用途/
+        /*
+            柯里化实际是把简答的问题复杂化了，但是复杂化的同时，我们在使用函数时拥有了更多的自由度。而这里对于函数参数的自由处理，正是柯里化的核心所在。柯里化本质上是降低通用性，提高适用性。
+
+            我们工作中会遇到各种需要通过正则检验的需求，比如检验电话号码、校验邮箱、校验身份证号、校验密码等。这时我们会封装一个通用函数checkByRegExp,接收两个参数，校验的正则对象和待校验的字符串
+        */  
+
+        function checkByRegExp(regExp,string) {
+            return regExp.test(string);  
+        }
+
+        checkByRegExp(/^1\d{10}$/, '18642838455'); // 校验电话号码
+        checkByRegExp(/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/, 'test@163.com'); // 校验邮箱
+
+        /*
+            上面这段代码，乍一看没有什么问题，可以满足我们所有通过正则检验的需求，但是我们考虑这样一个问题，如果我们需要校验多个电话号码或者校验多个邮箱呢
+
+        */ 
+
+        checkByRegExp(/^1\d{10}$/, '18642838455'); // 校验电话号码
+        checkByRegExp(/^1\d{10}$/, '13109840560'); // 校验电话号码
+        checkByRegExp(/^1\d{10}$/, '13204061212'); // 校验电话号码
+
+        checkByRegExp(/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/, 'test@163.com'); // 校验邮箱
+        checkByRegExp(/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/, 'test@qq.com'); // 校验邮箱
+        checkByRegExp(/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/, 'test@gmail.com'); // 校验邮箱
+
+        /*
+            我们每次进行校验的时候都需要输入一串正则，再校验同一类型的数据时，相同的正则我们需要写多次，这就导致我们在使用的时候效率低下，并且由于checkByRegExp函数本身是一个工具函数并没有任何意义，一段时间后我们重新来看这些代码时，如果没有注释，我们必须通过检查正则的内容，我们才能知道我们检验的是电话号码还是邮箱，还是别的什么
+
+            此时，我们可以借助柯里化对checkByRegExp函数进行封装，以简化代码书写，提高代码可读性
+
+        */ 
+
+        //进行柯里化
+        let _check = curry(checkByRegExp);
+        //生成工具函数，验证电话号码
+        let checkCellPhone = _check(/^1\d{10}$/);
+        //生成工具函数，验证邮箱
+        let checkEmail = _check(/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/);
+
+        checkCellPhone('18642838455'); // 校验电话号码
+        checkCellPhone('13109840560'); // 校验电话号码
+        checkCellPhone('13204061212'); // 校验电话号码
+
+        checkEmail('test@163.com'); // 校验邮箱
+        checkEmail('test@qq.com'); // 校验邮箱
+        checkEmail('test@gmail.com'); // 校验邮箱
+
+
+        /*
+            再来看看通过柯里化封装后，我们的代码是不是变得又简介又直观了呢
+
+            经过柯里化后，我们生成了两个函数checkCellPhone和checkEmail，checkCellPhone函数只能验证传入的字符串是否是电话号码，checkEmail函数只能验证传入的字符串是否是邮箱，他们与原函数checkByRegExp相比，从功能上通用性降低了，但适用性提升了，柯里化的这种用途可以被理解为，参数复用
+
+            我们再来看一个例子
+
+            假定我们有这样一段数据
+        */ 
+
+        let list = [
+            {
+                name:'lucy'
+            },
+            {
+                name:'jack'
+            }
+        ]
+
+        // 我们需要获取数据中的所有name属性的值，常规思路下：
+        let names = list.map(function(item) {
+            return item.name;
+        })
+
+        // 如何用柯里化的思维
+        let prop = curry(function(key,obj) {
+            return obj[key];
+        })
+        let names = list.map(prop('name'))
+
+        /*
+            看到这里，可能会有个疑问，这么简单的例子，仅仅只是为了获取name的属性值，为何还要实现一个prop函数呢，这样太麻烦了吧
+
+            我们可以换个思路，prop函数实现一次后，以后是可以多次使用的，所以我们在考虑代码复杂程度的时候，是可以将prop函数的实现去掉的
+
+            我们实际的代码可以理解为只有一行 let names = list.map(prop('name'))
+
+            这么看来，通过柯里化的方式，我们的代码是不是变得更加精简了，并且可读性更高了呢
+        */ 
+
+        /如何封装柯里化工具函数/
+        /*
+            接下来，我们来思考如何实现curry函数
+
+            回想之前我们对于柯里化的定义，接收一部分函数，返回一个函数接收剩余参数，接收足够参数后，执行原函数
+
+            我们已经知道了，当柯里化函数接受到足够参数后，就会执行原函数，那么我们如何去确定何时达到足够的参数呢？
+
+            我们有两种思路：
+                1、通过函数的length属性，获取函数的形参个数，形参的个数就是所需的参数个数
+                2、在调用柯里化工具函数时，手动指定所需的参数个数
+        */  
+
+        /*
+            我们将这两点结合一下，实现一个简单curry函数
+        */ 
+
+        /**
+         * 将函数柯里化
+         * @param fn    待柯里化的原函数
+         * @param len   所需的参数个数，默认为原函数的形参个数
+         */
+        function curry(fn,len = fn.length) {
+            return _curry.call(this,fn,len)
+        }
+
+        /**
+         * 中转函数
+         * @param fn    待柯里化的原函数
+         * @param len   所需的参数个数
+         * @param args  已接收的参数列表
+         */
+        function _curry(fn,len,...args) {
+            return function (...params) {
+                let _args = [...args,...params];
+                if(_args.length >= len){
+                    return fn.apply(this,_args);
+                }else{
+                    return _curry.call(this,fn,len,..._args)
+                }
+            }
+        }
+
+        let _fn = curry(function(a,b,c,d,e){
+            console.log(a,b,c,d,e)
+        });
+
+        _fn(1,2,3,4,5);     // print: 1,2,3,4,5
+        _fn(1)(2)(3,4,5);   // print: 1,2,3,4,5
+        _fn(1,2)(3,4)(5);   // print: 1,2,3,4,5
+        _fn(1)(2)(3)(4)(5); // print: 1,2,3,4,5
+
+
+
+    </script>
+</body>
+</html>

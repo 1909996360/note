@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React中可以在render访问refs吗。为什么</title>
+</head>
+<body>
+    <script>
+    /*
+         <>
+            <span id="name" ref={this.spanRef}>{this.state.title}</span>
+            <span>{
+                this.spanRef.current ? '有值' : '无值'
+            }</span>
+        </>
+
+        不可以，render阶段DOM还没有生成，无法获取DOM，DOM的获取需要在pre-commit阶段和commit阶段
+    */    
+    </script>
+</body>
+</html>

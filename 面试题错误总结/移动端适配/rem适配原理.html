@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rem适配原理</title>
+</head>
+<body>
+    <script>
+        // 参考地址：https://juejin.cn/post/6844903704567644167
+
+        /总结/
+        /*
+        
+        */
+       
+        
+        /前言/
+        /*
+            一般我们在公司开发页面，UI设计图出750px的图，也就是基于ip6设计的图，如果我们使用得当的配置，UI图上的东西是多少px，我们就写多少px，这是程序员最方便的，但是这个是怎么配置的呢
+        */  
+        /如果不配置，我们在css里写多少px才能还原设计图/
+       /*
+            举个例子，假如现在图上有个宽度100px的按钮，UI图是750px的图
+            答案是我们应该写100px/2 = 50px.css里width = 50px；
+            那为什么100px除以2呢？ 因为iphone的dpr = 2
+       */ 
+
+       /什么是dpr?/
+       /*
+            dpr的全称是window.devicePixelRatio,它等于物理像素/dips。其实就是一个比例（物理像素就是一个个的小格子，用来显示不同颜色的。dips可以理解为虚拟像素，就像我们写的CSS）
+
+            从i4开始，iPhone的dpr就等于2了，所以其实就是把UI图除以2，就是你应该在css写多少px
+
+            以上是怎么还原设计稿的px单位，那现在又有个问题了，我们不是所有人都是用的i6，还是其他各种屏幕大小的手机
+       */    
+
+       /rem适配/  
+       /*
+            还是来举个上面相同的例子，假设现在图上有个宽度100px的按钮，ui图是750px的图，为了不同大小的屏幕适配，按钮我们应该写成多少rem呢？rem就是根元素的字体大小。根元素就是<html>标签，网页<html>的默认字体大小是16px，也就是浏览器默认的字号16px
+
+            换算方式： 1rem = 16px. 所以 100px = 100 / dpr / 16 = 3.125rem.所以按钮的宽度在css里，我们就应该写成3.125rem。屏幕上按钮的尺寸跟iphone6的比例就和UI图上一样了
+       */ 
+
+       /但是怎么去改变根字体的大小呢/
+       /*
+            1、用@media媒体查询设置不同屏幕的根字体大小，要写很多css代码，因为屏幕大小那么多，难以一一写全
+
+            2、用js代码，随着屏幕大小改变根字体大小的js，推荐写在入口页面
+            (function(){
+                function autoRootFontSize(){
+                    document.documentElement.style.fontSize = Math.min(screen.width,document.documentElement.getBoundingClientRect().width) / 750 * 32 + 'px'
+                    window.addEventListener('resize',autoRootFontSize)
+                    autoRootFontSize()
+                }
+            })()
+
+            当页面打开和发生变化时，就会执行resize事件，这里边用到了getBoundingClientRect属性，其实就是返回一个对象的left、top、right、bottom、width、height，单位为像素（请注意兼容问题，IE8及以下没有width、height）。屏幕宽度和html的宽度取个最小值（其实大部分情况两者是相同的）。移动端通常是除以32，为了让字更大一点，清晰一点
+
+            可以了，根字体随着屏幕大小而变化，那么不可能每次写css还要去换算应该写多少rem，那么多css，要写哭，推荐使用css预处理器，postcss、less、sass 
+       */    
+
+        /PostCss是一款使用插件去转换css的工具，可以处理CSS，通常是结合webpack这些工具一起使用的/
+        
+        /1、在项目根目录下建一个postcss.config.js文件/
+        /*
+            module.exports = {
+                plugins:{
+                    autoprefixer:{},
+                    'postcss-potorem':{
+                        rootValue:32,
+                        propList:['*'],
+                        minPixelValue:2
+                    }
+                }
+            }
+        */  
+
+        /*
+            这个plugins就是你要用到的插件，比如这里用到了两个插件autoprefixer、postcss-pxtorem
+
+            autoprefixer就是给css前面加上合适的前缀，这点少写了很多行代码
+
+            postcss-poxtorem就是把px转换成rem，这也就是我们上面根字体改变了，px也可以换算成rem，但是这个插件就可以根据你的根字体，自动换算rem
+
+            rootValue就是根字体大小，初始设置为32，在移动端更清晰一点
+
+            移动端我们目前就只用到了这两个插件，
+
+            并且结合webpack使用，那么在webpack里应该怎么写
+
+            module:{
+                rules:[
+                    {
+                        test:/\.scss$/,
+                        use:['style-loader','css-loader','postcss-loader','sass-loader']
+                    },
+                    {
+                        test:/\.css/,
+                        use:['style-loader','css-loader','postcss-loader']
+                    }
+                ]
+            }
+
+            直接在css-loader后面这样加上postcss-loader。就会去处理postcss里的东西，postcss-loader的安装命令：npm install --save-dev postcss-loader
+        */ 
+
+        /综上所述/
+        /*
+            UI图上是100px，你直接在css里写100px，就是这么简单，不管什么大小的屏幕，字体大小会随之变化，永远都是最合适的大小。并且，打包后的代码，都是由前缀的代码
+        */  
+    </script>
+</body>
+</html>

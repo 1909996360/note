@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>react组件传值</title>
+</head>
+<body>
+    <script>
+        /1、父子组件传值/
+             /父组件向子组件传值/  
+            /*
+                · 父组件提供要传递的state数据
+                · 给子组件添加标签属性，值是state中的数据
+                · 子组件通过props接收父组件传来的数据
+            */  
+
+            class P extends React.Component{
+                state = {
+                    childv:'父组件向子组件传值'
+                }
+                render(){
+                    return(
+                        <div>
+                            <C childValue={this.state.childv}/>    
+                        </div>
+                    )
+                }
+            }
+
+            class C extends React.Component{
+                render(){
+                    return(
+                        <div>{this.props.childValue}</div>
+                    )
+                }
+            }
+
+            ReactDom.render(<P /> ,document.getElementById('root'))
+
+            /子组件向父组件传值/
+            /*
+                总体思路：利用回调函数，父组件提供回调函数，子组件调用，将要传递的数据，作为回调函数的参数
+                · 父组件提供回调函数，用于接收数据
+                · 将该函数作为属性值，传递给子组件
+                · 子组件通过props接收，并调用回调函数
+                · 将子组件的数据，作为参数传递给回调函数
+            */ 
+
+            class P extends React.Component{
+                getMessage = data =>{
+                    console.log('父组件接收数据',data);
+                }
+                render(){
+                    return(
+                        <div>
+                            <C getM ={this.getMessage}/>
+                        </div>
+                    )
+                }
+            }
+
+            class C extends React.Component{
+                state = {
+                    msg:'子组件向父组件传递数据'
+                }
+                handleMessage = () => {
+                    this.props.getM(this.state.msg)
+                }
+                render(){
+                    return(
+                        <div>
+                            <button onClick={this.handleMessage}></button>
+                        </div>
+                    )
+                }
+            }
+            React.render(<P />,document.getElementById('root'))
+
+        /2、兄弟组件传值/
+        /*
+            总体思路：将状态共享，提升到最近的公共父组件中，由父组件管理状态
+                · 提升公共状态
+                · 提供操作共享状态的方法
+            
+            点击按钮，进行技术，按钮进行技术操作，数字进行展示
+            · 共享状态就是：数字
+            · 操作共享状态的方法：点击按钮，进行状态 +1
+        */  
+
+        class P extends React.Component{
+            // 共享状态
+            state = {
+                count:0
+            }
+            // 操作共享状态的方法
+            add = () => {
+                this.setState({
+                    count:this.state.count + 1
+                })
+            }
+            render(){
+                return(
+                    <div>
+                        <C1 count={this.state.count}></C1>
+                        <C2 add={this.add}></C2>
+                    </div>
+                )
+            }
+        }
+
+        // 数据展示
+
+        const C1  = (props) => {
+            return(
+                <div>{props.count}</div>
+            )
+        }
+
+        // 逻辑操作
+        const C2 = (props) => {
+            return(
+                <div>
+                    <button onClick={()=> {props.add()}}>我是按钮+1</button>
+                </div>
+            )
+        }
+        ReactDOM.render(<P />,document.getElementById('root'))
+
+        /3、祖孙组件传值/
+        /*
+            Context跨组件传递数据
+        */  
+            /调用React.createContext()创建Provider(提供数据)和Consumer(消费数据)两个组件/ 
+            const {Provider,Consumer} = React.createContext()
+
+            /使用Provider组件作为父节点/
+            <Provider>
+                <div className ="App"/>
+                 <Child />    
+            </Provider> 
+            
+            /设置value属性表示要传递的数据/
+            <Provider  value="被组件传递数据"/> 
+
+            /调用Consumer组件接收数据(Consumer组件中，回调函数的参数，就是Provider传递来的参数)/
+            
+            <Consumer>
+                {data => <span>{data}</span>}
+            </Consumer>
+
+            
+        /4、总结/
+        /*
+            1、函数式组件（无状态组件）通过props就可以取到数据。类组件（有状态组件）中通过this.props来取数据
+            2、函数式组件，可以是函数声明 funtcion A(){},也可以是函数表达式和箭头函数的结合体 const A = () => {} 。两者在事件绑定中，函数表达式和箭头函数的结合体，可以省略this的绑定
+            3、demo对于state有很多重复的编写，其实可以用解构的方式来编写 const {msg} = this.state
+            4、对于回调函数和箭头函数的文字描述，箭头函数从代码上就可辨识为箭头函数，但回调函数是延迟执行，需要的时候再执行文中箭头函数充当了延迟执行的功能，所以把有的箭头函数称之为回调函数，这样更能理解组件代码的执行逻辑
+        */  
+    </script>
+</body>
+</html>

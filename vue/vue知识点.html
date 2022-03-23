@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            1、nextTick
+                nextTick是vue提供的一个函数，并非浏览器内置，nextTick函数接收一个回调函数cb，下一个DOM更新循环之后执行，比如下面的示例
+
+            <template>
+                <div>
+                    <p v-if="show" ref="node">内容</p>
+                    <button @click="handleShow">显示</button>
+                </div>
+                </template>
+                <scriptemplate>
+                export default {
+                    data () {
+                    return {
+                        show: false
+                    }
+                    },
+                    methods: {
+                    handleShow () {
+                        this.show = true;
+                        console.log(this.$refs.node);  // undefined
+                        this.$nextTick(() => {
+                        console.log(this.$refs.node);  // <p>内容</p>
+                        });
+                    }
+                    }
+                }
+            </template>
+            
+            当show被置为true时，这是p节点还未被渲染，因为打印出的是undefined，而在nextTick的回调里，p已经渲染好了，这时能正确打印出节点，vue使用了promise、setTimeout和setImmediate三种方法来实现nextTick，在不同环境会使用不同的方法
+            
+
+        
+        */
+    </script>
+</body>
+</html>

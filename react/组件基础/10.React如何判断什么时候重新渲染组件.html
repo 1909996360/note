@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React如何判断什么时候重新渲染组件</title>
+</head>
+<body>
+    <script>
+        /*
+            组件状态的改变可以因为props的改变，或者直接通过setState方法改变，组件获取新的状态，然后React决定是否应该重新渲染组件，只要组件的state发生变化，React就会对组件进行重新渲染，这是因为React中的shouldComponentUpdate方法默认返回true，这就是导致每次更新都重新渲染的原因
+
+            当React将要渲染组件时会执行shouldComponentUpdate方法来看它是否返回true（组件应该更新，也就是重新渲染）。所以需要重写shouldCompoentUpdate方法让它根据情况返回true或者false来告诉React什么时候重新渲染什么时候跳过重新渲染
+        */ 
+    </script>
+</body>
+</html>

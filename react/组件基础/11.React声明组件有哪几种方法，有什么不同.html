@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React声明组件有哪几种方法，有什么不同</title>
+</head>
+<body>
+    <script>
+        /*
+            React声明组件的三种方式：
+            · 函数式定义的无状态组件
+            · ES5原生方式React.createClass定义的组件
+            · ES6形式的extends React.Component定义的组件
+            
+        （1）无状态函数式组件：它是为了创建纯展示组件，这种组件只负责根据传入的props来展示，不涉及到state状态的操作，组件不会被实例化，整体渲染性能得到提升，不能访问this对象，不能访问生命周期的方法
+        （2）ES5原生方式React.createClass,React.createClass会自动绑定函数方法，导致不必要的性能开销，增加代码过时的可能性
+        （3）ES6继承形式React.component , 目前极为推荐的创建有状态组件的方式，最终会取代React.createClass形式，相对于React.createClass可以更好实现代码复用
+
+        无状态组件相对于后者的区别：与无状态组件相比，React.createClass和React.Component都是创建有状态的组件，这些组件是要被实例化的，并且可以访问组件的生命周期方法
+
+        React.createClass 与 React.Component区别：
+        1、函数this自绑定
+            · React.createClass创建的组件，其每一个成员函数的this都有React自动绑定，函数中的this会被正确设置
+            · React.Component创建的组件，其成员函数不会自动绑定this,需要开发者手动绑定，否则this不能获取当前组件实例对象
+
+        2、组件属性类型propTypes及其默认props属性defaultProps配置不同
+            · React.createClass在创建组件时，有关组件props的属性类型及组件默认的属性会作为组件实例的属性来配置，其中defaultProps是使用getDefaultProps的方法来获取默认组件属性的
+            · React.Component在创建组件时配置这两个对应信息时，他们是作为组件类的属性，不是组件实例的属性，也就是所谓的类的静态属性来配置的
+
+        3、组件初始状态state的配置不同
+            · React.createClass创建的组件，其状态state是通过getInitialState方法来配置组件相关的状态
+            · React.Component创建的组件，其状态state是在constructor中像初始化组件属性一样声明的
+
+        */ 
+    </script>
+</body>
+</html>

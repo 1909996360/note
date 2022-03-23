@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$nextTick的实现</title>
+</head>
+<body>
+    <script>
+        /*
+            1、nextTick是vue提供的一个全局API，是在下次DOM更新循环结束之后执行延迟回调，在修改数据之后使用$nextTick,则可以在回调中获取更新后的DOM
+            2、vue在更新DOM时是异步执行的，只要侦听到数据变化，vue将开启一个队列，并缓冲在同一事件循环中发生的所有数据变更。如果同一个watcher被多次触发，只会被推入到队列中一次。这种在缓冲时去除重复数据对于避免不必要的计算和DOM操作是非常重要的。nextTick方法会在队列中加入一个回调函数，确保该函数在前面的dom操作完成后才调用
+            3、比如，我在干什么的时候就会使用nexttick，传一个回调函数进去，在里面执行dom操作即可
+            4、我也有简单了解nexttick实现，他会在callbacks里面加入我们传入的函数，然后用timerFunc异步方式调用他们，首选的异步方式会是promise，这让我明白了为什么可以在nexttick中看到dom操作结果
+
+            $nextTick的实现原理是什么？
+                在下次DOM更新循环结束之后执行延迟回调，在修改数据之后立即使用nextTick来获取更新后的DOM。nextTick主要使用了宏任务和微任务。根据执行环境分别尝试采用promise、MutatonObserver、setImmeidate，如果以上都不行则采用setTimeout定义了一个异步方法，多次调用nextTick会将方法存在队列中，通过这个异步方法清空当前队列
+        */ 
+    </script>
+</body>
+</html>

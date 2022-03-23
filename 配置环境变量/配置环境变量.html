@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>配置环境变量</title>
+</head>
+<body>
+    <script>
+        // 参考地址:https://juejin.cn/post/6933000974822801421
+        /*
+            前言:项目有开发环境,测试环境,线上环境,里面的接口域名等是不同的.每次调试或者打包的时候手动改动个个变量,比较麻烦,也容易出错,所以用自动化方式直接配置不同的环境变量
+
+            文件配置:
+                在项目根目录下添加文件,并配置变量
+                .env.development(本地环境变量)
+                NODE_ENV = 'development'
+                VUE_APP_URL = 'dev.xxx.com'
+
+                .env.production(线上环境变量)
+                NODE_ENV = 'production'
+                VUE_APP_URL = 'prod.xxx.com'
+
+            启动配置:
+                在package.json中配置scripts
+                "serve":"vue-cli-service serve --mode development"
+
+            本地运行(使用线上环境变量):
+                "serve:prod":"vue-cli-service serve --mode production"
+
+            如果需要传入环境变量,可以添加cross-env NODE_ENV=development,其中cross-env用于兼容mac
+                "serve:prod":'cross-env NODE_ENV=development vue-cli-service --mode production'
+
+            打包:
+                "build":"vue-cli-service build --mode production"
+
+            项目中使用
+                console.log(process.env.VUE_APP_URL)
+        */ 
+    </script>
+</body>
+</html>

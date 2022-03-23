@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>为什么JS阻塞页面加载</title>
+</head>
+<body>
+    <script>
+        /*
+           由于JavaScript是可操纵DOM的，如果在修改这些元素属性同时渲染界面（即JavaScript线程和UI线程同时运行），那么渲染线程前后获得的元素数据就可能不一致了
+           
+           因此为了防止渲染出现不可预期的结果，浏览器设置GUI渲染线程与JavaScript引擎为互斥的关系
+
+           当JavaScript引擎执行时GUI线程会被挂起，GUI更新会被保存在一个队列中等到引擎线程空闲时立即被执行
+
+           从上面我们可以推理出，由于GUI渲染线程与JavaScript执行线程是互斥的关系
+
+           当浏览器在执行JavaScript程序的时候，GUI渲染线程会被保存在一个队列中，直到JS程序执行完成，才会接着执行
+
+           因此由于JS执行的时间过长，这样就会造成页面的渲染不连贯，导致页面渲染加载阻塞的感觉
+        */ 
+    </script>
+</body>
+</html>

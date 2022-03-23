@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端路由原理</title>
+</head>
+<body>
+    <script>
+        //参考地址： https://juejin.cn/post/6844903906024095751
+        
+        /一、什么是路由/
+        /*
+            路由的概念起源于服务端，在以前前后端不分离的时候，由后端来控制路由，当接收到客户端发来的HTTP请求，就会根据所请求的响应的URL，来找到相应的映射函数，然后执行该函数，并将函数的返回值发送给客户端，对于最简单的静态资源服务器，可以认为，所有URL映射函数就是一个文件读取操作，对于动态资源，映射函数可能是一个数据库读取操作，也可能是进行一些数据的处理等等，然后根据这些读取的数据，在服务端就使用相应的模板来对页面进行渲染后，再返回渲染完毕的页面，它的好处与缺点非常明显
+
+                · 好处：安全性好，SEO好
+                · 缺点：加大服务器的压力， 不利于用户体验，代码不好维护
+
+            也正是由于后端路由还存在一些自己的不足，前端路由才有了自己的发展空间，对于前端路由来说，路由的映射函数通常是进行一些DOM的显示和隐藏操作。这样，当访问不同的路径的时候，会显示不同的页面组件，前端路由主要有以下两种实现方案：
+
+                · Hash
+                · History
+
+            当然，前端路由也存在缺陷：使用浏览器的前进、后退键时会重新发送请求，来获取数据，没有合理的利用缓存，但总的来说，现在前端路由已经是实现路由的主要方式了
+        */  
+
+        /前端路由的两种实现/
+        /2.1Hash模式/
+        /2.1.1原理/ 
+        /*
+            早期的前端路由的实现就是基于location.hash来实现的，其实现原理也很简单，location.hash的值就是URL中#后面的内容，比如下面这个网站，它的location.hash的值为"#search":
+            https://www.word.com#search
+
+            此外，hash也存在下面几个特性：
+                · URL中hash值只是客户端的一种状态，也就是说当向服务器发出请求时，hash部分不会被发送
+                · hash值的改变，都会在浏览器的访问历史中增加一个记录，因此我们能通过浏览器的回退，前进按钮控制hash的切换
+                · 我们可以使用hashchange事件来监听hash的变化
+
+            我们可以通过两种方式触发hash变化，一种是通过a标签，并设置href属性，当用户点击这个标签后，URL就会发生变化，也就会触发hashchange事件了
+            <a href="#search"></a>
+
+            还有一种方式就是直接使用js来对location.hash进行赋值，从而改变URL，触发hashchange事件
+            location.hash = "#search"
+        */   
+
+        /2.1.2实现/
+        /*
+            我们先定义一个父类BaseRouter，用于实现Hash路由和History路由的一些公共方法
+        */  
+
+        export class BaseRouter{
+            // list表示路由表
+            constructor(list){
+                this.list = list
+            }
+            // 页面渲染函数
+            render(state){
+                let ele = this.list.find(ele => ele.path === state)
+                ele = ele ? ele : this.list.find(ele => ele.path === '*');
+                ELEMENT.innerText = ele.component;
+            }
+        }
+
+        /*
+            我们简单实现了push压入功能、go前进、后退功能
+        */ 
+
+        export class HashRouter extends BaseRouter {
+            constructor(list) {
+                super(list);
+                this.handler();
+                // 监听 hashchange 事件
+                window.addEventListener('hashchange', e => {
+                    this.handler();
+                });
+            }
+            // hash 改变时，重新渲染页面
+            handler() {
+                this.render(this.getState());
+            }
+            // 获取 hash 值
+            getState() {
+                const hash = window.location.hash;
+                return hash ? hash.slice(1) : '/';
+            }
+            // push 新的页面
+            push(path) {
+                window.location.hash = path;
+            }
+            // 获取 默认页 url
+            getUrl(path) {
+                const href = window.location.href;
+                const i = href.indexOf('#');
+                const base = i >= 0 ? href.slice(0, i) : href;
+                return base +'#'+ path;
+            }
+            // 替换页面
+            replace(path) {
+                window.location.replace(this.getUrl(path));
+            }
+            // 前进 or 后退浏览历史
+            go(n) {
+                window.history.go(n);
+            }
+        }
+
+
+        /2.2History模式/ 
+        /2.2.1原理/
+        /*
+            前面的hash虽然也很不错，但使用时都需要加上#，并不是很美观，因此到了HTML5，又提供了History API来实现URL的变化，其中做最主要的API有以下两个：history.pushState()和history.repalceState()。这两个API可以在不进行刷新的情况下，操作浏览器的历史记录，唯一不同的是，前者是新增一个历史记录，后者是直接替换当前的历史记录，如下所示
+        */  
+        window.history.pushState(null, null, path);
+        window.history.replaceState(null, null, path);
+
+        /*
+            此外，history存在下面几个特性：
+                · pushState和repalceState的标题（title）：一般浏览器会忽略，最好传入null
+                · 我们可以使用popState事件来监听url的变化
+                · history.pushState()或history.replaceState()不会触发popState事件，这时我们需要手动触发页面渲染
+        */ 
+
+        /2.2.2实现/
+        
+        export class HistoryRouter extends BaseRouter {
+            constructor(list) {
+                super(list);
+                this.handler();
+                // 监听 popstate 事件
+                window.addEventListener('popstate', e => {
+                    console.log('触发 popstate。。。');
+                    this.handler();
+                });
+            }
+            // 渲染页面
+            handler() {
+                this.render(this.getState());
+            }
+            // 获取 url 
+            getState() {
+                const path = window.location.pathname;
+                return path ? path : '/';
+            }
+            // push 页面
+            push(path) {
+                history.pushState(null, null, path);
+                this.handler();
+            }
+            // replace 页面
+            replace(path) {
+                history.replaceState(null, null, path);
+                this.handler();
+            }
+            // 前进 or 后退浏览历史
+            go(n) {
+                window.history.go(n);
+            }
+        }
+
+        /2.3两种路由模式的对比/
+        /*
+            hash模式兼容ie8以上， history兼容ie10以上
+        */  
+    </script>
+</body>
+</html>

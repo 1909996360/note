@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>canvas</title>
+</head>
+<body>
+    <script>
+        // 参考地址：https://juejin.cn/post/6844903602201460750
+        /*
+            前言：
+                · canvas元素本身是没有绘图能力的，所有的绘制工作必须在JavaScript内部完成
+        */ 
+            var cv = document.getElementById('myCanvas')
+            var context = cv.getContext('2d') //申请一个绘制2d动画的环境
+
+            /getContext(
+                "webgl",
+                {antialias:false,
+                depth:false
+                }
+            )/ 
+            /*
+                2d上下文属性
+                · alpha:boolean值表明canvas包含一个alpha通道，如果设置为false，浏览器将认为canvas背景总是不透明的，这样可以加速绘制透明的内容和图片
+                · willReadFrequently:boolean值表明是否有重复读取计划，经常使用getImageData(),这将迫使软件使用2D canvas并节省内存（而不是硬件加速）。这个方案适用于存在属性gfx.canvas.willReadFrequently的环境，并设置true
+                · storage：string这样表示使用哪种方式存储
+
+                WebGl上下文属性：
+                · alpha: boolean值表明canvas包含一个alpha缓冲区
+                · antialias：boolean值表明是否开启锯齿
+                · depth:boolean值表明绘制缓冲区包含一个深度至少为16位的缓冲区
+                · failIfMajorPerformanceCaveat:表明在一个系统性能低的环境是否创建该上下文的boolean值
+                · powerPreference：指示浏览器在运行webgl上下文使用相应的GPU电源配置，
+                · permultipliedAlpha：表明排版引擎将假设绘制缓冲区包含预混合alpha通道的boolean值
+                · preserveDrawingBuffer:如果这个值为true缓冲区将不会被清除，会保存下来，直到被清除或被使用者覆盖
+                · stencil：表明绘制缓冲区包含一个深度至少为8位的模板缓冲区boolean值
+            */ 
+
+            /clearRect()/
+            /*
+                CanvasRenderingContext2D.clearRect()是canvas 2D API的方法，这个方法通过把像素设置为透明以达到擦除一个矩形区域的目的
+                注意：如果没有依照绘制路径的步骤，使用clearRect（）会导致意想之外的结果，请确保在调用clearRect()之后绘制新内容前调用beginPath()
+                语法：
+                    canvas.clearRect(x,y,width,height)
+
+                clearRect()方法在一个矩形区域内设置所有像素都是透明的(rgba(0,0,0,0)).这个矩形范围的左上角在(x,y),宽度和高度分别由width和height确定
+
+                参数：
+                    x：矩形起点的x轴坐标
+                    y：矩形起点的y轴坐标
+                    width：矩形的宽度
+                    height:矩形的高度
+                
+                示例：
+                    清除整个画布
+                    这段代码清除整个画布，这段代码通常在动画的每一帧开始被执行，清除的范围涵盖了整个canvas元素
+                        const canvas = document.getElementById('canvas')
+                        const ctx = canvas.getContext('2d')
+                        ctx.clearRect(0,0,canvas.width,canvas.height)
+
+                    清除一部分画布
+                    这仅是一段简单的使用clearRect方法的代码片段
+                    HTML
+                    <canvas id="canvas"></canvas>
+
+                    var canvas = document.getElementById('canvas')
+                    var ctx = canvas.getContext('2d')
+
+                    // 绘制黄色背景
+                    ctx.beginPath()
+                    ctx.fillStyle = "#ff6"
+                    ctx.fillRect(0,0,canvas.width,canvas.height)
+
+                    // 绘制蓝色三角形
+                    ctx.beginPath()
+                    ctx.fillStyle = 'blue'
+                    ctx.moveTo(20,20)
+                    ctx.lineTo(180,20)
+                    ctx.lineto(130,130)
+                    ctx.closePath()
+                    ctx.fill()
+
+                    // 清除一部分画布
+                    ctx.clearRect(10,10,120,100)
+            */  
+
+            /drawImage()/
+            /*
+                语法：
+                    canvas.drawImage(image,dx,dy)
+                参数：
+                    image:
+                        绘制到上下文的元素。允许任何的canvas图像源
+                    sx：可选
+                        需要绘制到目标上下文的，iamge的矩形（裁剪）选择框的左上角x轴坐标
+                    sy：可选
+                        需要绘制到目标上下文的，image的矩形（裁剪）选择框的左上角y轴坐标
+                    sWidth:可选
+                        需要绘制到目标上下文中的，image的矩形（裁剪）选择框的宽度。如果不说明，整个矩形（裁剪）从坐标的sx和sy开始，到image的右下角结束
+                    sHeight：可选
+                        需要绘制到目标上下文中的，iamge的矩形（裁剪）选择框的高度
+                    dx:
+                        image的左上角在目标canvas上x轴坐标
+                    dy：
+                        image的左上角在目标canvas上y轴坐标
+                    dwidth：可选
+                        image在目标canvas上绘制的宽度，允许对绘制的iamge进行缩放，如果不说明，在绘制时image宽度不会缩放
+                    dheight：可选
+                        image在目标canvas上绘制的高度，允许对绘制的iamge进行缩放，如果不说明，在绘制时image高度不会缩放
+
+                抛出异常：
+                    INDEX_SIZE_ERR
+                        如果canvas或者图像矩形区域的宽度或高度为0
+                    INVALID_STATE_ERR
+                        图像没有数据
+                    TYPE_MISMATCH_ERR
+                        提供的原始元素不支持
+                    NS_ERROR_NOT_AVAILABLE
+                        图像尚未加载。使用.complete === true 和 .onload确定何时准备就绪
+
+                示例：
+                    使用drawImage方法
+                    这是一段使用drawImage方法的简单的代码片段
+                    <canvas id="canvas">
+                        <img id="source" src="https://mdn.mozillademos.org/files/5397/rhino.jpg" width="300" height="227">    S
+                    </canvas>
+
+                    var canvas = document.getElementById('canvas')
+                    var ctx = canvas.getContext('2d')
+                    var image = document.getElementById('source')
+                    ctx.drawImage(image,33,71,104,124,21,20,87,104)
+
+                理解源元素大小
+                    drawImage()方法在绘制时使用源元素的CSS大小
+                    例如，如果加载图像并在其构造函数中指定可选的大小参数，则必须使用所创建的naturalWidth和naturalHeight属性来正确计算裁剪和缩放区域等内容，而不是element.width和element.height。
+            */  
+
+            /toDataURL()/
+            /*
+                    dataURL:可以使用type参数其类型，默认为png格式，图片的分辨率为96dpi
+                    · 如果画布的高度或宽度是0，那么会返回字符串""data:,"
+                    · 如果传入的类型非"image/png",但是返回的值以"data:image/png"开头，那么该传入的类型是不支持的
+                    · chrome支持"image/webp"类型
+
+                    语法：
+                        canvas.toDataURL(type,encoderOptions)
+                    参数：
+                        type：可选
+                            图片格式，默认是image/png
+                        encoderOptions:可选
+                            在指定图片格式为image/jpeg或image/webp的情况下，可以从0到1的区间内选择图片的质量，如果超出取值范围，将会使用默认值0.92，其他参数会被忽略
+                        
+                    返回值：
+                        包含dataUrl 的DOMString
+                    
+                    示例：
+                        有如下<canvas>元素
+                        <canvas id="canvas" width="5" height="5"></canvas>
+
+                        可以用这样的方式获取一个data-URL
+                        var canvas = document.getElementById('canvas')
+                        var dataURL = canvas.toDataURL()
+                        console.log(dataURL)
+                        // "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNby
+                        // blAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC"
+
+                    设置jpegs图片的质量
+                        var fullQuality = canvas.toDataURL('image/jpeg',1.0)
+                        var mediumQuality = canvas.toDataURL('image/jpeg',0.5)
+                        var lowQuality = canvas.toDataURL('image/jpeg',0.1)
+            */  
+
+        /*
+            · 检测浏览器是否支持：也可以用js脚本检查if(canvas.getContext)
+            在不支持时可以在canvas标签文本中插入不支持信息
+        */ 
+            // <canvas>hey!你现在的浏览器不支持canvas画布，请更新浏览器</canvas>
+
+        /*
+        */ 
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>state和props触发更新的生命周期有什么区别</title>
+</head>
+<body>
+    <script>
+        /state更新流程/ 
+        /*
+            shouldComponentUpdate(true) -> componentWillUpdate -> render -> componentDidUpdate
+         
+            这个过程当中涉及的函数：
+
+        */
+            /1、shouldComponentUpdate：/ 
+            /*
+                当组件的state或props发生改变时，都会首先触发这个生命周期，它会接受两个参数：nextProps、nextState ---- 他们分别代表传入的新props和新的state值，拿到这两个值之后，我们就可以通过一些对比逻辑来决定是否有re-render（重渲染）的必要了，如果该函数的返回值为false，则生命周期中止，反之继续；
+
+                注意：此方法仅作为性能优化的方式而存在，不要企图依靠此方法来”阻止“渲染，因为这可能会产生bug，应该考虑使用内置的PureComponent组件，而不是手动编写shouldComponentUpdate()
+            */ 
+        
+            /2、componentWillUpdate/
+            /*
+                当组件的state或props发生改变时，会在渲染之前调用componentWillUpdate.componentWillUpdate是React16废弃的三个生命周期之一。过去，我们可能希望在这个阶段去收集一些必要的信息（比如更新前的DOM信息等等），现在我们完全可以在React16的getSnapshotBeforeUpdate中去做这些事
+            */  
+
+            /3、componentDidUpdate/
+            /*
+                componentDidUpdate()会在UI更新后会被立即调用，它接收prevProps（上一次的props值）作为入参，也就是说在此处我们仍然能可以进行props值对比（再次说明componentWillUpdate不好用）
+            */  
+
+
+        /props更新流程/
+        /*
+            componentWillReceiveProps -> shouldComponentUpdate(true) -> componentWillUpdate -> render -> componentDidUpdate
+
+            相对于state更新，props更新后唯一的区别是增加了对componentWillReceiveProps的调用，关于componentWillReceiveProps,需要知道这些事情：
+
+        */  
+
+            /componentWillReceiveProps/
+            /*
+                它在Component接受到新的props时被触发，componentWillReceiveProps会接收一个名为nextProps的参数（对应新的props值）。该生命周期是React16废弃掉的三个生命周期之一，在它被废弃前，可以用它来比较this.props和nextProps来重新setState。在React16中，用一个类似的新生命周期getDerivedStateFromProps来替代他
+            */  
+    </script>
+</body>
+</html>

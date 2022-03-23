@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>key的作用</title>
+</head>
+<body>
+    <script>
+        /*
+            ·key的作用是为了在diff算法执行时更快的找到对应的节点，提高diff速度，更高效的更新虚拟DOM
+
+                vue和react都是采用diff算法来对比新旧虚拟节点，从而更新节点，在vue的diff函数中，会根据新节点的key去对比旧节点数组中的key，从而找到相应旧节点。如果没找到就认为是一个新增节点。而如果没有key，那么就会采用遍历查找的方法去找到对应的旧节点。一种一个map映射，另一种是遍历查找，相比而言，map映射的速度更快
+
+            ·为了在数据变化时强制更新组件，以避免”就地复用“带来的副作用
+                当vue.js用v-for更新已渲染过的元素列表时，它默认用”就地复用“策略。如果数据项的顺序被改变，vue将不会移动DOM元素来匹配数据项的顺序，而是简单复用此处每个元素，并且确保它在特定索引下显示已被渲染过的每个元素，重复的key会造成渲染错误
+        */ 
+    </script>
+</body>
+</html>

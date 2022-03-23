@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>对React中Fragment的理解，他的使用场景是什么？</title>
+</head>
+<body>
+    <script>
+        /*
+            在React中，组件返回的元素只能有一个根元素，为了不添加多余的DOM节点，我们可以使用Fragment标签来包裹所有的元素，Fragment标签不会渲染出任何元素，React官方对Fragment的解释：
+                React中的一个常见模式是一个组件返回多个元素。Fragment允许你将子列表分组，而无需向DOM添加额外节点
+
+
+        */ 
+        // import React, { Component, Fragment } from 'react'
+
+        // // 一般形式
+        // render() {
+        //     return (
+        //         <React.Fragment>
+        //         <ChildA />
+        //         <ChildB />
+        //         <ChildC />
+        //         </React.Fragment>
+        //     );
+        // }
+        // // 也可以写成以下形式
+        // render() {
+        //     return (
+        //         <>
+        //         <ChildA />
+        //         <ChildB />
+        //         <ChildC />
+        //         </>
+        //     );
+        // }
+
+    </script>
+</body>
+</html>
