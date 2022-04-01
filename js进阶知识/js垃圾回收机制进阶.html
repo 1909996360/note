@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // 参考地址：https://juejin.cn/post/6932276699283324936
+        /JS垃圾回收机制/
+        /*
+            众所周知：应用程序在运行过程中需要占用一定的内存空间，且在运行过后就必须将不再用到的内存释放掉，否则就会出现下图中内存的占用持续升高的情况，一方面会影响程序的运行速度，另一方面严重的话则会导致整个程序的崩溃
+        */  
+
+        /JavaScript中的内存管理/
+        /*
+            · 内存：由可读写单元组成，表示一片可操作空间
+            · 管理：人为的去操作一片空间的申请、使用和释放
+            · 内存管理：开发者主动申请空间、使用空间、释放空间
+            · 管理流程： 申请 - 使用 - 释放
+
+
+            部分语言需要手动去释放内存，但是会很麻烦，所以很多语言，例如‘Java’都会提供自动的内存管理机制，称为‘垃圾回收机制’，‘JavaScript’语言也提供了垃圾回收机制，简称GC机制
+        */  
+
+        /全停顿/
+        /*
+            在介绍完垃圾回收算法之前，我们先了解以下"全停顿"，垃圾回收算法在执行前，需要将应用逻辑暂停，执行完垃圾回收后再执行应用逻辑，这种行为称为 全停顿 ， 例如：如果一次GC需要50ms，应用逻辑就会暂停50ms
+
+            全停顿的目的，是为了解决应用逻辑与垃圾回收器看到的情况不一致的问题
+        */  
+
+        /JavaScript中的垃圾回收/
+        /*
+            JavaScript中会被判定为垃圾的情形如下：
+
+            · 对象不再被引用
+            · 对象不能从根上访问
+        */  
+
+        /GC算法/
+        /*
+            常见的GC算法如下：
+                · 引用计数
+                · 标记清除  
+                · 标记整理
+                · 分代回收
+        */  
+                /引用计数/
+                    /*
+                        早期的浏览器最常使用的垃圾回收方法叫做‘引用计数’：语言引擎有一张‘引用表’，保存了内存里面所有的资源（通常是各种值）的引用次数。如果一个值的引用次数是0，就表示这个值不再用到了，因此可以将这块内存释放
+
+                        const user1 = {age:11}
+                        const user2 = {age:22}
+                        const user3 = {age:33}
+
+                        const userList = [user.age,user2.age,user3.age]
+
+
+                        上面这段代码，当执行过一遍过后，user1、user2、user3都是被userList引用的，所以他们的引用计数不为零，就不会被回收
+                    */ 
+
+                    /*
+                        function fn() {
+                            const num1 = 1
+                            const num2 = 2
+                        }
+
+                        fn()
+
+                        上面代码中fn函数执行完毕，num1、num2都是局部变量，执行过后，他们的引用计数就都为零，所有这样的代码都会被当作‘垃圾’，进行回收
+
+                    */ 
+
+                    /*
+                        引用计数算法有一个比较大的问题：循环引用
+
+                        function objGroup(obj1, obj2) {
+                            obj1.next = obj2
+                            obj2.prev = obj1
+
+                            return {
+                                o1: obj1,
+                                o2: obj2,
+                            }
+                        }
+
+                        let obj = objGroup({name: 'obj1'}, {name: 'obj2'})
+                        console.log(obj)
+
+                        上面的这个例子中，obj1和obj2通过各自的属性相互引用，所以他们的引用计数都不为零，这样就不会被垃圾回收机制回收，造成内存浪费
+
+                        引用计数算法其实还有一个比较大的缺点，就是我们需要单独拿出一片空间去维护每个变量的引用计数，这对于比较大的程序，空间开销还是比较大的
+
+                        优点：
+                            · 引用计数为零时，发现垃圾立即回收
+                            · 最大限度减少程序暂停
+
+                        缺点：
+                            · 无法回收循环引用的对象
+                            · 空间开销比较大
+                    */ 
+
+                /标记清除/
+                    /*
+                        核心思想：分标记和清除两个阶段完成
+                            · 遍历所有对象找标记活动对象
+                            · 遍历所有对象清除没有标记对象
+                            · 回收相应的空间
+
+                        优点：
+                            对比引用技术算法，标记清除算法最大的优点是能够回收循环引用的对象，他也是v8引擎使用最多的算法
+
+                        缺点：
+                            空间碎片化
+                    */
+                   
+                /标记整理/
+                /*
+                        为了解决内存碎片化的问题，提高对内存的利用，引入了标记整理算法
+
+                        标记整理可以看做是标记清除的增强，标记阶段的操作和标记清除一致
+
+                        清除阶段会先执行整理，移除对象位置，将存活的对象移动到一遍，然后再清理端边界外的内存
+
+                        缺点：
+                            移动对象位置，不会立即回收对象，回收的效率比较慢
+                */  
+
+                /增量标记/
+                /*
+                        为了减少全停顿的时间，'V8'对标记进行了优化，将一次停顿进行的标记过程，分成了很多小步。每执行完一小步就让应用逻辑执行一会儿，这样交替多次后完成标记
+
+                        长时间的GC，会导致应用暂时和无响应，将会导致糟糕的用户体验，从2011年起，V8就将全暂停标记换成了增量标记，改进后的标记方式，最大停顿时间减少到原来的六分之一
+                */  
+
+                /V8引擎垃圾回收策略/
+                /*
+                        · 采用分代回收的思想
+                        · 内存分为新生代、老生代
+
+                        针对不同对象采用不同算法：
+                            · 新生代：对象的存活时间较短，新生对象和只经过一次垃圾回收的对象
+                            · 老生代：对象存活时间较长，经历过一次或多次垃圾回收的对象
+
+                        V8堆的空间等于新生代空间加上老生代空间，且针对不同的操作系统对空间做了内存的限制
+
+                        针对浏览器来说，这样的内存是足够使用的，限制内存的原因：
+                            经过不断测试，如果内存再设置大一点，‘GC’回收的时间就会达到用户的感知，会造成感知上的卡顿
+                */  
+
+                /回收新生代对象/
+                /*
+                        回收新生代对象主要采用 ‘复制算法’加标记整理算法，而复制算法的具体实现，主要采用了Cheney算法
+
+                        Cheney算法将内存分为两个等大空间，使用空间为‘From’，空闲空间为‘To’
+
+                        检查‘From’空间内的存活对象，若对象存活，检查对象是否符合晋升条件，若符合条件晋升到老生代，否则将对象从‘From’空间复制到‘To’空间，若对象不存活，则释放不存活对象的空间，完成复制后，将‘From’空间与‘To’空间进行角色翻转
+                */  
+
+                /对象晋升机制/
+                /*
+                        一轮‘GC’还存活的新生代需要晋升
+                        当对象从‘From’空间复制到‘To’空间时，若‘To’空间使用超过25%，则对象直接晋升到老生代中，设置为25%的比例的原因是，当完成 复制算法 回收后，To空间将翻转为From空间，继续进行对象内存的分配，若占比过大，将影响后续内存分配
+                */  
+
+                /回收老生代对象/
+                /*
+                        回收老生代对象主要采用标记清除、标记整理、增量标记算法，主要使用标记清除算法，只有在内存分配不足时，采用标记整理算法
+
+                        · 首先使用标记清除完成垃圾空间的回收
+                        · 采用标记整理进行空间优化
+                        · 采用增量标记进行效率优化
+                        
+                */  
+
+                /新生代和老生代回收对比/
+                /*
+                        · 新生代由于占用空间比较少，采用空间换时间机制
+                        · 老生代区域空间比较大，不太适合大量的复制算法和标记整理，所以最常用的是 标记清除 算法，为了就是让全停顿的时间尽量减少
+                */  
+
+                /性能优化/
+                   /1、避免使用全局变量/
+                   /*
+                        · 全局变量会挂载在window下
+                        · 全局变量至少有一个引用计数
+                        · 全局变量存活更久，持续占用内存
+                        · 在明确数据作用域的情况下，尽量使用局部变量
+                   */    
+
+                  /2、减少判断层级/
+                  /*
+                        function doSomething(part, chapter) {
+                            const parts = ['ES2016', '工程化', 'Vue', 'React', 'Node']
+
+                            if (part) {
+                                if (parts.includes(part)) {
+                                    console.log('属于当前课程')
+                                    if (chapter > 5) {
+                                        console.log('您需要提供 VIP 身份')
+                                    }
+                                }
+                            } else {
+                                console.log('请确认模块信息')
+                            }
+                        }
+
+                        doSomething('Vue', 6)
+
+                        // 减少判断层级
+                        function doSomething(part, chapter) {
+                            const parts = ['ES2016', '工程化', 'Vue', 'React', 'Node']
+
+                            if (!part) {
+                                console.log('请确认模块信息')
+                                return
+                            }
+
+                            if (!parts.includes(part)) return
+                            console.log('属于当前课程')
+
+                            if (chapter > 5) {
+                                console.log('您需要提供 VIP 身份')
+                            }
+                        }
+
+                        doSomething('Vue', 6)
+
+                  */   
+
+                 /3、减少数据读取次数/
+                /对于频繁使用的数据，我们要对数据进行缓存/
+                /*
+                        <div id="skip" class="skip"></div>
+
+                        <script>
+                            var oBox = document.getElementById('skip')
+
+                            // function hasEle (ele, cls) {
+                            //     return ele.className === cls
+                            // }
+
+                            function hasEle (ele, cls) {
+                                const className = ele.className
+                                return className === cls
+                            }
+
+                            console.log(hasEle(oBox, 'skip'))
+
+                */  
+
+                /4、减少循环体中的活动/
+                /*
+                            var test = () => {
+                                var i
+                                    var arr = ['Hello World!', 25, '岂曰无衣，与子同袍']
+                                    for(i = 0; i < arr.length; i++) {
+                                        console.log(arr[i])
+                                    }
+                                }
+
+                                // 优化后，将arr.length单独提出，防止每次循环都获取一次
+                                var test = () => {
+                                    var i
+                                    var arr = ['Hello World!', 25, '岂曰无衣，与子同袍']
+                                    var len = arr.length
+                                    for(i = 0; i < len; i++) {
+                                        console.log(arr[i])
+                                    }
+                            }
+
+                */  
+
+                /5、事件绑定优化/
+                /*
+                            <ul class="ul">
+                                <li>Hello World!</li>
+                                <li>25</li>
+                                <li>岂曰无衣，与子同袍</li>
+                            </ul>
+
+                            <script>
+                                var list = document.querySelectorAll('li')
+                                function showTxt(ev) {
+                                    console.log(ev.target.innerHTML)
+                                }
+
+                                for (item of list) {
+                                    item.onclick = showTxt
+                                }
+
+                                // 优化后
+                                function showTxt(ev) {
+                                    var target = ev.target
+                                    if (target.nodeName.toLowerCase() === 'li') {
+                                        console.log(ev.target.innerHTML)
+                                    }
+                                }
+
+                                var ul = document.querySelector('.ul')
+                                ul.addEventListener('click', showTxt)
+
+                */  
+                
+                /6、避开闭包陷阱/ 
+                /*
+                                <button class="btn">点击</button>
+
+                                <script>
+                                    function foo() {
+                                        let el = document.querySelector('.btn')
+                                        el.onclick = function() {
+                                            console.log(el.className)
+                                        }
+                                    }
+                                    foo()
+
+                                    // 优化后
+                                    function foo1() {
+                                        let el = document.querySelector('.btn')
+                                        el.onclick = function() {
+                                            console.log(el.className)
+                                        }
+                                        el = null // 将el置为 null 防止闭包中的引用使得不能被回收
+                                    }
+                                    foo1()
+
+                */ 
+    </script>       
+</body>
+</html>

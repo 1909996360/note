@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手写深拷贝</title>
+</head>
+<body>
+    <script>
+        // 参考地址：https://juejin.cn/post/7061588533214969892
+
+        // /深拷贝/
+        
+        /*
+         * @param {Object} obj要拷贝的对象
+         * @param {Map} map用于存储循环引用对象的地址
+         * 
+         * 
+         * */
+        
+        function deepClone(obj = {} , map = new Map()){
+            // 判断当前传进来的数据是否为对象
+            if(typeof obj !== 'object') return obj
+            // 判断当前传进来的对象属性是否为undefined
+            if(map.get(obj)) return map.get(obj)
+            // 创建一个空对象
+            let result = {}
+            // 判断当前obj的类型是否为数组，如果是直接返回[]
+            if(obj instanceof Array || Object.prototype.toString(obj) === '[Object Array]') return result = []
+
+            // 防止循环引用
+            map.set(obj,result)
+
+            for(const key in obj){
+                // 保证key不是原型属性
+                if(obj.hasOwnProperty(key)){
+                    // 递归调用
+                    result[key] = deepClone(obj[key],map)
+                }
+            }
+            // 返回结果
+            return result
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>介绍下HTTPS中间人攻击</title>
+</head>
+<body>
+    <script>
+        /*
+            · https 协议由 http + ssl协议构成
+            · 中间人攻击过程如下：
+                · 服务端向客户端发送公钥
+                · 攻击者获取公钥，保留自己手上
+                · 然后攻击者自己生成一个伪造的公钥，发给客户端
+                · 客户端收到伪造的公钥后，生成加密的hash密钥值发给服务器
+                · 攻击者获得加密的hash值，用自己的私钥解密获取真密钥
+                · 同时生成假的加密hash值，发给服务器
+                · 服务器用私钥解密获得假密钥
+                · 服务器用假密钥加密传输信息
+
+            · 防范方法：
+                服务器在发送浏览器的公钥中加入CA证书，浏览器可以验证CA证书的有效性；
+        */ 
+    </script>
+</body>
+</html>

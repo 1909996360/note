@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>http缓存有几种</title>
+</head>
+<body>
+    <script>
+        /http缓存的分类/
+        /*
+            根据是否需要重新向服务器发起的请求来分类，可分为（强制缓存、协商缓存）根据是否可以被单个或者多个用户来分类，可分为（私有缓存，共享缓存）强制缓存如果生效，不需要再和服务器发送交互，而协商缓存不管是否生效，都需要服务端发生交互，下面是强制缓存和协商缓存的一些对比：
+
+                            强缓存          协商缓存
+            存储位置       本地浏览器       本地浏览器
+            http状态码       200              304
+       关请求头与响应头    cache-control-   Etag/If-Not-Match
+                            Expire         Last-Modified / If-Modified-Since
+        */ 
+       
+        /强制缓存/
+        /*
+            强制缓存在缓存数据未失效的情况下（即Cache-Control的max-age没有过期或者Expires的缓存时间没有过期），那么就会直接使用浏览器的缓存数据，不会再向服务器发送任何请求。强制缓存生效时，http状态码为200。这种方式页面的加载速度是最快的，性能也是很好的，但是在这期间，如果服务器端的资源修改了，页面上是拿不到的，因为他不会在向服务器发请求了。这种情况就是我们在开发中经常遇到的，比如你修改了页面上的某个样式，在页面上刷新了但没有生效，因为走的是强缓存，所以ctrl+F5之后就好了，跟强制缓存相关的header头属性有（Pragma/Cache-Control/Expires）,Pragma和Cache-control共存时，Pragma的优先级是比Cache-control高的
+        */  
+
+        /协商缓存/ 
+        /*
+            当第一次请求时服务器返回的响应头中没有Cache-Control和Expires或者Cache-Control和Expires过期或者它的属性设置为no-cache时（即不走强缓存），那么浏览器第二次请求时就会与服务器进行协商，与服务器端对比判断资源是否进行了修改更新，如果服务器端的资源没有修改，那么就会返回304状态码，告诉浏览器可以使用缓存中的数据，这样就减少了服务器的数据传输压力，如果数据有更新就会返回200状态码，服务器就会返回更新后的资源并且将缓存信息一起返回。跟协商缓存相关的header头属性有（ETag/If-Not-Match 、Last-Modified/If-Modified-Since）请求头和响应头需要成对出现
+        */ 
+
+        /私有缓存(浏览器级缓存)/
+        /*
+            私有缓存只能用于单独的用户：Cache-Control:Private
+        */  
+
+        /共享缓存(代理级缓存)/
+        /*
+            共享缓存可以被多个用户使用：Cache-Control:Public
+        */  
+
+        /协商缓存原理，谁跟谁协商，如何协商/
+        /*
+            协商缓存：向服务器发送请求，服务器会根据这个请求的request header的一些参数来判断是否命中协商缓存，如果命中，则返回304状态并带上新的response hader通知浏览器从缓存中读取资源
+
+            服务器和请求协商，根据请求头携带的参数进行协商
+        */  
+    </script>
+</body>
+</html>

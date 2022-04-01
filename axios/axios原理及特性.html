@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>axios原理及其特性</title>
+</head>
+<body>
+    <script>
+        // 参考地址：https://juejin.cn/post/6856706569263677447
+
+        /axios是什么/
+        /*
+            Axios是一个基于promise的HTTP库，可以用在浏览器和node.js中
+        */  
+
+        /axios有什么特性？/
+        /*
+            · 从浏览器中创建XMLHttpRequests
+            · 从node.js创建http请求
+            · 支持Promise API
+            · 拦截请求和响应
+            · 转换请求数据和响应数据
+            · 取消请求
+            · 自动转换JSON数据
+            · 客户端支持防御XSRF
+        */  
+
+        /*
+            简单来说，axios的基本原理就是
+
+            1、axios还是属于XMLHttpRequest，因此需要实现一个ajax。或者基于http
+            2、还需要一个promise对象来对结果进行处理
+            
+        */ 
+
+            /取消请求/
+            /*
+                因为Axios底层是利用XMLHttpRequest对象来发起请求，如果要取消请求的话，我们可以通过调用XMLHttpRequest对象上的abort方法来取消请求
+
+                而对于Axios来说，我们可以通过Axios内部提供的CancelToken来取消请求
+            */  
+    
+            // 1、利用axios内部提供的CancelToken创建CancelToken
+            const CancelToken = axios.CancelToken
+            const source = CancelToken.source()
+            // 创建一个空数组来存储需要取消请求的接口进程
+            var cancelList = []
+            var removePending = () =>{
+                if(cancelList && cancelList.length){
+                    cancelList.map(item =>{
+                        if(item.source){
+                            // 取消数组每个的请求
+                            item.source.cancel()
+                        }
+                    })
+                }
+            }
+
+            //  2、在axios请求拦截器axios.interceptors.request.use中将所有的请求放到数组cancelList中
+
+            axios.interceptors.request.use((config)=>{
+                config.CancelToken = source.token
+                cancelList.push(config.CancelToken)
+            })
+
+            // 3、在axios响应拦截器axios.interceptors.response.use中取消所有的请求
+            axios.interceptors.response.use((response)=>{
+                try{
+                    // 如果状态为xxx，就运行方法，取消掉当前正在进行的请求
+                    removePending()
+                }catch(err){
+                    console.log(err);
+                }
+            })
+
+            /CancelToken的工作原理/
+            /*
+                在前面的实例中，我们通过调用CancelToken构造函数来创建CancelToken对象：
+
+                接下来，分析CancelToken构造函数，该函数被定义在lib/cancel/CancelToken.js文件中
+            */  
+            function CancelToken(executor) {
+                if (typeof executor !== 'function') {
+                    throw new TypeError('executor must be a function.');
+                }
+
+                var resolvePromise;
+                this.promise = new Promise(function promiseExecutor(resolve) {
+                    resolvePromise = resolve;
+                });
+
+                var token = this;
+                executor(function cancel(message) {
+                    if (token.reason) {
+                    // Cancellation has already been requested
+                    return;
+                    }
+
+                    token.reason = new Cancel(message);
+                    resolvePromise(token.reason);
+                });
+            }
+
+            /*
+                由以上代码可知，cancel对象是一个函数，当我们调用该函数后，会创建cancel对象并调用resolvePromise方法，该方法执行后，CancelToken对象上promise属性所指向的pormise对象的状态将变为resolved，那么这样做的目的是什么呢？这里我们从lib/adapters/xhr.js文件中找到答案
+            */ 
+
+            if (config.cancelToken) {
+                // Handle cancellation
+                config.cancelToken.promise.then(function onCanceled(cancel) {
+                    if (!request) {
+                    return;
+                    }
+
+                    request.abort();
+                    reject(cancel);
+                    // Clean up request
+                    request = null;
+                });
+            }
+
+            /总结取消的步骤/
+            
+            /*
+                1、创建cancelToken对象
+                2、调用executor函数，设置cancel函数，该函数用于取消请求
+                3、当用户调用cancel函数时，会创建Cancel对象，然后调用reslovePromise方法，进而执行以上then的处理逻辑
+            */ 
+    </script>
+</body>
+</html>
